@@ -9,21 +9,40 @@ import JobOpportunities from "@/components/Testimonials";
 import Resources from "@/components/Resources";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
+import { Fade } from "react-awesome-reveal";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <TopBar />
       <Navbar />
-      <Hero />
-      <Services />
-      <About />
-      <Stats />
-      <ClientLogos />
-      <JobOpportunities />
-      <Resources />
-      <CTASection />
-      <Footer />
+      <Fade>
+        <Hero />
+      </Fade>
+      <Fade>
+        <Services />
+      </Fade>
+      <Fade>
+        <About />
+      </Fade>
+      <Fade>
+        <Stats />
+      </Fade>
+      <Fade>
+        <ClientLogos />
+      </Fade>
+      <Fade>
+        <JobOpportunities />
+      </Fade>
+      <Fade>
+        <Resources />
+      </Fade>
+      <Fade>
+        <CTASection />
+      </Fade>
+      <Fade>
+        <Footer />
+      </Fade>
     </div>
   );
 };

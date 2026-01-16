@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Slide } from "react-awesome-reveal";
 
 const resources = [
   {
@@ -54,40 +55,42 @@ const Resources = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {resources.map((resource, index) => (
-            <Dialog key={index}>
-              <DialogTrigger asChild>
-                <div className="group bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 cursor-pointer">
-                  <div className="aspect-video overflow-hidden">
-                    <img
-                      src={resource.image}
-                      alt={resource.title}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
+            <Slide direction="up" key={index}>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="group bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 cursor-pointer">
+                    <div className="aspect-video overflow-hidden">
+                      <img
+                        src={resource.image}
+                        alt={resource.title}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      />
+                    </div>
+                    <div className="p-4">
+                      <span className="text-xs font-medium text-teal-dark uppercase tracking-wide">
+                        {resource.type}
+                      </span>
+                      <h3 className="font-serif font-semibold text-foreground mt-2 line-clamp-2 group-hover:text-teal-dark transition-colors">
+                        {resource.title}
+                      </h3>
+                    </div>
                   </div>
-                  <div className="p-4">
-                    <span className="text-xs font-medium text-teal-dark uppercase tracking-wide">
-                      {resource.type}
-                    </span>
-                    <h3 className="font-serif font-semibold text-foreground mt-2 line-clamp-2 group-hover:text-teal-dark transition-colors">
-                      {resource.title}
-                    </h3>
-                  </div>
-                </div>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>{resource.title}</DialogTitle>
-                  <DialogDescription>
-                    <img
-                      src={resource.image}
-                      alt={resource.title}
-                      className="w-full h-auto object-cover rounded-md my-4"
-                    />
-                    {resource.description}
-                  </DialogDescription>
-                </DialogHeader>
-              </DialogContent>
-            </Dialog>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>{resource.title}</DialogTitle>
+                    <DialogDescription>
+                      <img
+                        src={resource.image}
+                        alt={resource.title}
+                        className="w-full h-auto object-cover rounded-md my-4"
+                      />
+                      {resource.description}
+                    </DialogDescription>
+                  </DialogHeader>
+                </DialogContent>
+              </Dialog>
+            </Slide>
           ))}
         </div>
       </div>

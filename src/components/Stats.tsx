@@ -1,3 +1,5 @@
+import { AttentionSeeker } from "react-awesome-reveal";
+
 const stats = [
   {
     value: "20+",
@@ -23,12 +25,14 @@ const Stats = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {stats.map((stat, index) => (
-            <div key={index} className="text-center p-6">
-              <div className="text-5xl md:text-6xl font-serif font-bold text-teal-dark mb-4">
-                {stat.value}
+            <AttentionSeeker key={index} effect="bounce">
+              <div className="text-center p-6">
+                <div className="text-5xl md:text-6xl font-serif font-bold text-teal-dark mb-4">
+                  {stat.value}
+                </div>
+                <p className="text-muted-foreground">{stat.label}</p>
               </div>
-              <p className="text-muted-foreground">{stat.label}</p>
-            </div>
+            </AttentionSeeker>
           ))}
         </div>
       </div>
