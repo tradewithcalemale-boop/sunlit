@@ -1,77 +1,114 @@
 import { useState } from "react";
-import { Menu, X, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTrigger,
+  SheetClose,
+} from "./ui/sheet";
+import { Button } from "./ui/button";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-
   const navItems = [
-    { label: "WHO WE ARE", href: "#about" },
-    { label: "WHAT WE DO", href: "#services", hasDropdown: true },
-    { label: "RESOURCES", href: "#resources" },
-    { label: "OUR CLIENTS", href: "#clients", hasDropdown: true },
-    { label: "PODCAST", href: "#podcast" },
+    {
+      label: "Our Services",
+      href: "/our-services",
+    },
+    {
+      label: "CV Database",
+      href: "/cv-database",
+    },
+    { label: "Contact Us", href: "/contact-us" },
+    { label: "Submit Job", href: "#" },
+    { label: "Login/Register", href: "/login-register" },
   ];
 
   return (
-    <nav className="bg-background py-4 px-4 sticky top-0 z-50 shadow-sm">
-      <div className="container mx-auto flex items-center justify-between">
-        {/* Logo */}
-        <a href="/" className="flex flex-col">
-          <span className="text-2xl font-bold font-serif text-primary">Jack Hammer</span>
-          <span className="text-xs tracking-wider">
-            FINDING <span className="text-cta font-semibold">GREAT</span> LEADERS
-          </span>
-        </a>
+    <Sheet>
+      <nav className="bg-background py-4 px-4 sticky top-0 z-50 shadow-sm">
+        <div className="container mx-auto flex items-center justify-between">
+          {/* Logo */}
+          <a href="/" className="flex items-center gap-2">
+            <img
+              src="https://i.ibb.co/tTfFThfq/image.png"
+              alt="Sunlit Centre Kenya Logo"
+              className="h-12"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
+                Sunlit Centre Kenya
+              </span>
+              <span className="text-xs tracking-wider font-semibold text-gray-500">
+                Dependable, Professional Partnership
+              </span>
+            </div>
+          </a>
 
-        {/* Desktop Navigation */}
-        <div className="hidden lg:flex items-center gap-8">
-          {navItems.map((item) => (
-            <a
-              key={item.label}
-              href={item.href}
-              className="flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary transition-colors"
-            >
-              {item.label}
-              {item.hasDropdown && <ChevronDown className="h-4 w-4" />}
-            </a>
-          ))}
-          <Button variant="cta" size="lg">
-            HIRE LEADERS
-          </Button>
-        </div>
-
-        {/* Mobile Menu Button */}
-        <button
-          className="lg:hidden text-foreground"
-          onClick={() => setIsOpen(!isOpen)}
-        >
-          {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Navigation */}
-      {isOpen && (
-        <div className="lg:hidden mt-4 pb-4 border-t">
-          <div className="flex flex-col gap-4 pt-4">
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center gap-8">
             {navItems.map((item) => (
-              <a
+              <Link
                 key={item.label}
-                href={item.href}
-                className="text-sm font-medium text-foreground hover:text-primary transition-colors px-4"
+                to={item.href}
+                className="flex items-center gap-1 text-sm font-medium text-foreground hover:text-primary transition-colors"
               >
                 {item.label}
-              </a>
+              </Link>
             ))}
-            <div className="px-4">
-              <Button variant="cta" className="w-full">
-                HIRE LEADERS
+          </div>
+
+          {/* Mobile Menu Button */}
+          <div className="lg:hidden">
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon">
+                <Menu />
               </Button>
-            </div>
+            </SheetTrigger>
           </div>
         </div>
-      )}
-    </nav>
+      </nav>
+
+      {/* Mobile Sidebar */}
+      <SheetContent side="left" className="w-[20rem] bg-background p-0 [&>button]:hidden">
+        <SheetHeader className="flex-row items-center justify-between p-2">
+          <a href="/" className="flex items-center gap-2">
+            <img
+              src="https://i.ibb.co/tTfFThfq/image.png"
+              alt="Sunlit Centre Kenya"
+              className="h-12"
+            />
+             <div className="flex flex-col">
+              <span className="text-lg font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
+                Sunlit Centre Kenya
+              </span>
+            </div>
+          </a>
+          <SheetClose asChild>
+            <Button variant="ghost" size="icon">
+              <X />
+            </Button>
+          </SheetClose>
+        </SheetHeader>
+        <div className="p-4">
+          <ul>
+            {navItems.map((item) => (
+              <li key={item.label} className="mb-2">
+                <SheetClose asChild>
+                  <Link
+                    to={item.href}
+                    className="block rounded-md p-2 font-medium hover:bg-accent"
+                  >
+                    {item.label}
+                  </Link>
+                </SheetClose>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </SheetContent>
+    </Sheet>
   );
 };
 

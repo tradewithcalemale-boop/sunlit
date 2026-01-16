@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import heroLeader from "@/assets/hero-leader.jpg";
 
-const Hero = () => {
+const Hero = ({ title, imageSrc }: { title?: string, imageSrc?: string }) => {
   return (
     <section className="hero-bg relative overflow-hidden">
       <div className="container mx-auto px-4 py-16 lg:py-24">
@@ -9,23 +9,16 @@ const Hero = () => {
           {/* Left Content */}
           <div className="relative z-10">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-serif text-hero-foreground leading-tight mb-6">
-              Africa's #1 Boutique Executive Search Firm
+              {title || "Your trusted partner in HR, organizational excellence, training, and ISO certification solutions."}
             </h1>
-            <div className="mb-8">
-              <p className="text-xl md:text-2xl text-hero-foreground/80">
-                Ready to Hire Your Next
-              </p>
-              <p className="text-xl md:text-2xl">
-                <span className="text-cta font-bold">Game-Changing</span>{" "}
-                <span className="text-hero-foreground/80">Leader?</span>
-              </p>
+            <div className="flex flex-wrap gap-4">
+              <Button variant="cta" size="xl">
+                Submit a Job
+              </Button>
+              <Button variant="outline" size="xl">
+                View Jobs
+              </Button>
             </div>
-            <Button variant="cta" size="xl" className="mb-3">
-              Start a Conversation
-            </Button>
-            <p className="text-hero-foreground/60 italic text-sm">
-              With a human, not a bot.
-            </p>
           </div>
 
           {/* Right Content - Image with Circle */}
@@ -36,7 +29,7 @@ const Hero = () => {
             {/* Image Circle */}
             <div className="relative w-80 h-80 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden border-4 border-cyan-accent/60 shadow-2xl">
               <img
-                src={heroLeader}
+                src={imageSrc || heroLeader}
                 alt="Executive Leader"
                 className="w-full h-full object-cover object-top"
               />

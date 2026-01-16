@@ -1,27 +1,23 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import CVDatabase from "./pages/CVDatabase";
+import ContactUs from "./pages/ContactUs";
+import OurServices from "./pages/OurServices";
+import LoginRegister from "./pages/LoginRegister";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/cv-database" element={<CVDatabase />} />
+        <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/our-services" element={<OurServices />} />
+        <Route path="/login-register" element={<LoginRegister />} />
+      </Routes>
+    </Router>
+  );
+}
 
 export default App;
