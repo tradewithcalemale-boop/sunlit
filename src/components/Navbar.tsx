@@ -58,7 +58,7 @@ const Navbar = () => {
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 flex-shrink-0">
-            <img src="https://i.ibb.co/tTfFThfq/image.png" alt="Sunlit Centre Kenya Logo" className="h-11" />
+            <img src="/logo.png" alt="Sunlit Centre Kenya Logo" className="h-10 w-auto object-contain drop-shadow-sm" />
             <div className="flex flex-col">
               <span className="text-lg font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent leading-tight">
                 Sunlit Centre Kenya
@@ -149,7 +149,7 @@ const Navbar = () => {
       <SheetContent side="left" className="w-[22rem] bg-background p-0 [&>button]:hidden">
         <SheetHeader className="flex-row items-center justify-between p-4 border-b">
           <a href="/" className="flex items-center gap-2">
-            <img src="https://i.ibb.co/tTfFThfq/image.png" alt="Sunlit Centre Kenya" className="h-10" />
+            <img src="/logo.png" alt="Sunlit Centre Kenya" className="h-9 w-auto object-contain" />
             <span className="text-base font-bold bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
               Sunlit Centre Kenya
             </span>
