@@ -37,10 +37,13 @@ const Hero = ({ title, imageSrc }: { title?: string; imageSrc?: string }) => {
             )}
           </div>
 
-          {/* Right Content - Circular Portrait with thin mint ring (jhammer style) */}
+          {/* Right Content - Portrait breaking out of a mint ring (jhammer style) */}
           <div className="relative flex justify-center lg:justify-end">
-            <div className="jh-photo-ring hero-photo-float w-72 h-72 sm:w-80 sm:h-80 lg:w-[440px] lg:h-[440px]">
-              <div className="w-full h-full rounded-full overflow-hidden shadow-2xl">
+            <div className="relative w-[300px] h-[300px] sm:w-[360px] sm:h-[360px] lg:w-[460px] lg:h-[460px]">
+              {/* decorative mint ring, offset to lower-left */}
+              <div className="absolute left-0 bottom-0 w-[85%] h-[85%] rounded-full border-2 border-cyan-accent/80" />
+              {/* photo, offset to upper-right so it overflows the ring */}
+              <div className="absolute right-0 top-0 w-[85%] h-[85%] rounded-full overflow-hidden shadow-2xl ring-1 ring-black/5">
                 <img
                   src={imageSrc || heroLeader}
                   alt="Executive Leader"
