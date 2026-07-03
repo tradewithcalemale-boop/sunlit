@@ -42,32 +42,32 @@ const Footer = () => {
             <h4 className="font-semibold mb-4 text-cta uppercase tracking-wider text-sm">Quick Links</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   What We Do
                 </Link>
               </li>
               <li>
-                <Link to="/humanitarian" className="hover:text-cta transition-colors">
+                <Link to="/humanitarian" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Humanitarian
                 </Link>
               </li>
               <li>
-                <Link to="/cv-database" className="hover:text-cta transition-colors">
+                <Link to="/cv-database" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   CV Database
                 </Link>
               </li>
               <li>
-                <Link to="/contact-us" className="hover:text-cta transition-colors">
+                <Link to="/contact-us" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Contact Us
                 </Link>
               </li>
               <li>
-                <Link to="/submit-job" className="hover:text-cta transition-colors">
+                <Link to="/submit-job" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Submit Job
                 </Link>
               </li>
               <li>
-                <Link to="/view-jobs" className="hover:text-cta transition-colors">
+                <Link to="/view-jobs" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   View Jobs
                 </Link>
               </li>
@@ -79,37 +79,37 @@ const Footer = () => {
             <h4 className="font-semibold mb-4 text-cta uppercase tracking-wider text-sm">Services</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Human Resource Consulting
                 </Link>
               </li>
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Employee Recruitment & Retention
                 </Link>
               </li>
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Outsourced HR Services
                 </Link>
               </li>
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Head Hunting / Executive Search
                 </Link>
               </li>
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Training &amp; Development
                 </Link>
               </li>
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Psychometric Assessments
                 </Link>
               </li>
               <li>
-                <Link to="/our-services" className="hover:text-cta transition-colors">
+                <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
                   Content Marketing
                 </Link>
               </li>
@@ -135,7 +135,7 @@ const Footer = () => {
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <a
                   href="mailto:info@sunlitcentrekenya.co.ke"
-                  className="hover:text-cta transition-colors"
+                  className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
                 >
                   info@sunlitcentrekenya.co.ke
                 </a>
@@ -149,7 +149,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="X (Twitter)"
-                className="hover:text-cta transition-colors"
+                className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
               >
                 <Twitter className="w-5 h-5" />
               </a>
@@ -158,7 +158,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
-                className="hover:text-cta transition-colors"
+                className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
@@ -168,7 +168,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Telegram Channel"
-                className="hover:text-cta transition-colors"
+                className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
               >
                 <TelegramIcon className="w-5 h-5" />
               </a>
@@ -177,7 +177,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="TikTok"
-                className="hover:text-cta transition-colors"
+                className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
               >
                 <TikTokIcon className="w-5 h-5" />
               </a>
@@ -186,7 +186,7 @@ const Footer = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"
-                className="hover:text-cta transition-colors"
+                className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
               >
                 <WhatsAppIcon className="w-5 h-5" />
               </a>
@@ -197,11 +197,11 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-12 pt-8 text-center text-sm text-primary-foreground/50">
           <p>© 2025 Sunlit Centre Kenya. All rights reserved.</p>
           <div className="flex justify-center gap-4 mt-2">
-            <a href="#" className="hover:text-primary-foreground transition-colors">
+            <a href="#" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
               Privacy Policy
             </a>
             <span>|</span>
-            <a href="#" className="hover:text-primary-foreground transition-colors">
+            <a href="#" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
               Terms of Service
             </a>
           </div>

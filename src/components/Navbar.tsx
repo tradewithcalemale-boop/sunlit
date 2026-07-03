@@ -28,6 +28,11 @@ const jobsItems = [
   { label: "Submit a Job", href: "/submit-job", desc: "Post an opening for your company" },
 ];
 
+const whoWeServeItems = [
+  { label: "Africa",         href: "/our-services", desc: "Talent solutions across Africa" },
+  { label: "Global Markets", href: "/our-services", desc: "Beyond borders, worldwide reach" },
+];
+
 const DropItem = ({ label, href, desc }: { label: string; href: string; desc: string }) => (
   <li>
     <NavigationMenuLink asChild>
@@ -88,11 +93,19 @@ const Navbar = () => {
                     What We Do
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <div className="w-[380px] p-5">
-                      <MegaHeader>By Solution</MegaHeader>
-                      <ul className="grid gap-1">
-                        {servicesItems.map((item) => <DropItem key={item.href} {...item} />)}
-                      </ul>
+                    <div className="flex gap-8 w-[620px] p-6">
+                      <div className="flex-1">
+                        <MegaHeader>By Solution</MegaHeader>
+                        <ul className="grid gap-1">
+                          {servicesItems.map((item) => <DropItem key={item.href} {...item} />)}
+                        </ul>
+                      </div>
+                      <div className="flex-1">
+                        <MegaHeader>Who We Serve</MegaHeader>
+                        <ul className="grid gap-1">
+                          {whoWeServeItems.map((item) => <DropItem key={item.label} {...item} />)}
+                        </ul>
+                      </div>
                     </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
@@ -205,6 +218,31 @@ const Navbar = () => {
             <ul className="-mx-2">
               {servicesItems.map((item) => (
                 <li key={item.href}>
+                  <SheetClose asChild>
+                    <Link
+                      to={item.href}
+                      className="group flex items-start gap-3 rounded-lg px-2 py-2.5 hover:bg-white/10 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-white group-hover:text-cyan-accent transition-colors">{item.label}</p>
+                        <p className="text-xs text-white/50 leading-snug truncate">{item.desc}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 mt-0.5 text-white/30 group-hover:text-cyan-accent flex-shrink-0" />
+                    </Link>
+                  </SheetClose>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Who We Serve group */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-cta pb-2 mb-2 border-b border-teal-light/40">
+              Who We Serve
+            </p>
+            <ul className="-mx-2">
+              {whoWeServeItems.map((item) => (
+                <li key={item.label}>
                   <SheetClose asChild>
                     <Link
                       to={item.href}

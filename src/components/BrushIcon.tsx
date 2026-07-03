@@ -1,5 +1,7 @@
-import type { LucideIcon } from "lucide-react";
+import type { ComponentType } from "react";
 import { cn } from "@/lib/utils";
+
+type IconComponent = ComponentType<{ className?: string; strokeWidth?: string | number }>;
 
 /**
  * jhammer-style feature icon: a thin orange line icon with a
@@ -10,7 +12,7 @@ const BrushIcon = ({
   align = "start",
   className,
 }: {
-  icon: LucideIcon;
+  icon: IconComponent;
   align?: "start" | "center";
   className?: string;
 }) => (

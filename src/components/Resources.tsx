@@ -53,26 +53,29 @@ const Resources = () => {
           Leadership Insights & Hiring Resources
         </h2>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 items-start">
           {resources.map((resource, index) => (
-            <Slide direction="up" key={index}>
+            <Slide
+              direction="up"
+              triggerOnce
+              key={index}
+              className={index % 2 === 1 ? "lg:mt-12" : ""}
+            >
               <Dialog>
                 <DialogTrigger asChild>
-                  <div className="group bg-background rounded-2xl overflow-hidden shadow-sm ring-1 ring-teal-light/30 hover:ring-teal-light/60 hover:shadow-xl transition-all duration-300 cursor-pointer">
-                    <div className="aspect-video overflow-hidden">
+                  <div className="group bg-white rounded-2xl overflow-hidden shadow-md ring-1 ring-teal-light/25 hover:ring-teal-light/70 hover:shadow-xl transition-all duration-300 cursor-pointer h-full flex flex-col">
+                    <div className="aspect-[4/3] overflow-hidden">
                       <img
                         src={resource.image}
                         alt={resource.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     </div>
-                    <div className="p-4">
-                      <span className="text-xs font-medium text-teal-dark uppercase tracking-wide">
-                        {resource.type}
-                      </span>
-                      <h3 className="font-serif font-semibold text-foreground mt-2 line-clamp-2 group-hover:text-teal-dark transition-colors">
+                    <div className="p-5 flex-1 flex flex-col">
+                      <h3 className="font-serif font-semibold text-lg text-primary leading-snug line-clamp-3 group-hover:text-teal-dark transition-colors">
                         {resource.title}
                       </h3>
+                      <div className="mt-auto pt-5 border-t border-border/70" />
                     </div>
                   </div>
                 </DialogTrigger>
