@@ -18,7 +18,7 @@ import { supabase } from "@/lib/supabase";
 import TopBar from "./TopBar";
 
 const servicesItems = [
-  { label: "Our Services", href: "/our-services", desc: "HR consulting, recruitment & more" },
+  { label: "What We Do", href: "/our-services", desc: "HR consulting, recruitment & more" },
   { label: "Humanitarian", href: "/humanitarian",  desc: "NGO, INGO & UN sector staffing" },
   { label: "CV Database",  href: "/cv-database",   desc: "Professional CV writing & matching" },
 ];
@@ -85,7 +85,7 @@ const Navbar = () => {
               <NavigationMenuList>
                 <NavigationMenuItem>
                   <NavigationMenuTrigger className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
-                    Services
+                    What We Do
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
                     <div className="w-[380px] p-5">

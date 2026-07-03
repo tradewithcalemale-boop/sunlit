@@ -64,7 +64,7 @@ const Humanitarian = () => {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
-      <Hero title="Humanitarian Services" imageSrc="https://i.ibb.co/GQSh45dX/image.png" />
+      <Hero title="Our Humanitarian Services" imageSrc="https://i.ibb.co/GQSh45dX/image.png" />
 
       {/* Intro */}
       <section className="py-16">

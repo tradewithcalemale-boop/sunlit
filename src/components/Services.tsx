@@ -1,30 +1,30 @@
 import { Slide, JackInTheBox } from "react-awesome-reveal";
-import { Search, Users, Briefcase, GraduationCap } from "lucide-react";
+import { Fingerprint, Handshake, UserPlus, Lightbulb } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BrushIcon from "@/components/BrushIcon";
 import { Link } from "react-router-dom";
 
 const offerings = [
   {
-    icon: Search,
+    icon: Fingerprint,
     title: "Executive Search",
     href: "/our-services#head-hunting",
     desc: "We deliver the most committed and competent leaders — helping you find, attract, motivate and retain the best people in the market.",
   },
   {
-    icon: Users,
+    icon: Handshake,
     title: "HR Consulting",
     href: "/our-services#human-resource-consulting",
     desc: "Tailored HR strategies that reduce costs and sharpen your competitive edge — from audits and policy to organizational development.",
   },
   {
-    icon: Briefcase,
+    icon: UserPlus,
     title: "Recruitment & Retention",
     href: "/our-services#employee-recruitment",
     desc: "An integrity-driven process that produces high-quality candidates — from a single appointment to major recruitment drives.",
   },
   {
-    icon: GraduationCap,
+    icon: Lightbulb,
     title: "Training & Development",
     href: "/our-services#training-development",
     desc: "Need-based training programmes and competency frameworks that translate directly into measurable performance gains.",
