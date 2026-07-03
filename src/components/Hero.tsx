@@ -31,15 +31,18 @@ const Hero = ({ title, imageSrc }: { title?: string; imageSrc?: string }) => {
             )}
           </div>
 
-          {/* Right Content - Image Circle */}
-          <div className="relative flex justify-center lg:justify-end">
-            <div className="absolute -right-20 -top-10 w-[500px] h-[500px] lg:w-[600px] lg:h-[600px] rounded-full circle-outline opacity-40" />
-            <div className="relative w-80 h-80 lg:w-[450px] lg:h-[450px] rounded-full overflow-hidden border-4 border-cyan-accent/60 shadow-2xl">
-              <img
-                src={imageSrc || heroLeader}
-                alt="Executive Leader"
-                className="w-full h-full object-cover object-top"
-              />
+          {/* Right Content - Framed Portrait (jhammer style) */}
+          <div className="relative flex justify-center lg:justify-end pr-6 pb-6">
+            <div className="jh-photo-frame relative w-80 h-96 lg:w-[420px] lg:h-[520px]">
+              <div className="relative z-10 w-full h-full rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                <img
+                  src={imageSrc || heroLeader}
+                  alt="Executive Leader"
+                  className="w-full h-full object-cover object-top"
+                />
+                {/* Subtle navy gradient at base to blend with dark hero */}
+                <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-hero/50 to-transparent" />
+              </div>
             </div>
           </div>
         </div>

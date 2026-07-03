@@ -2,10 +2,11 @@ import { Zoom } from "react-awesome-reveal";
 
 const About = () => {
   return (
-    <section className="py-20 bg-[#f7a41d]">
+    <section className="py-20 bg-hero">
       <Zoom>
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto text-center">
+            <div className="w-16 h-1 bg-cyan-accent mx-auto mb-6 rounded-full" />
             <h2 className="text-4xl md:text-5xl font-serif text-white mb-6">
               Strategic Advisory
             </h2>

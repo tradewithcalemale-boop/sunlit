@@ -115,7 +115,7 @@ const OurServices = () => {
 
       {/* Intro */}
       <section className="py-16 container mx-auto px-4 text-center max-w-2xl">
-        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
+        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 bg-gradient-to-r from-primary via-primary to-teal-light bg-clip-text text-transparent">
           Our Services
         </h2>
         <p className="text-muted-foreground text-lg">
