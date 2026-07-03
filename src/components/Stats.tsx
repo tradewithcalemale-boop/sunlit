@@ -27,7 +27,11 @@ const Stats = () => {
           {stats.map((stat, index) => (
             <AttentionSeeker key={index} effect="bounce">
               <div className="text-center p-6">
-                <div className="text-5xl md:text-6xl font-serif font-bold text-teal-dark mb-4">
+                <div
+                  className={`text-5xl md:text-6xl font-serif font-extrabold mb-4 ${
+                    index % 2 === 0 ? "text-cyan-accent" : "text-cta"
+                  }`}
+                >
                   {stat.value}
                 </div>
                 <p className="text-muted-foreground">{stat.label}</p>

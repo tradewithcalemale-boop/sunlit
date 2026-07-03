@@ -58,7 +58,7 @@ const Resources = () => {
             <Slide direction="up" key={index}>
               <Dialog>
                 <DialogTrigger asChild>
-                  <div className="group bg-background rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 cursor-pointer">
+                  <div className="group bg-background rounded-2xl overflow-hidden shadow-sm ring-1 ring-teal-light/30 hover:ring-teal-light/60 hover:shadow-xl transition-all duration-300 cursor-pointer">
                     <div className="aspect-video overflow-hidden">
                       <img
                         src={resource.image}

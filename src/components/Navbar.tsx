@@ -54,16 +54,16 @@ const Navbar = () => {
 
   return (
     <Sheet>
-      <nav className="bg-background py-3 px-4 sticky top-0 z-50 shadow-sm border-b border-border">
+      <nav className="bg-hero py-4 px-4 sticky top-0 z-50 shadow-md border-b border-white/10">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
           <a href="/" className="flex items-center gap-2 flex-shrink-0">
             <img src="/logo.png" alt="Sunlit Centre Kenya Logo" className="h-10 w-auto object-contain drop-shadow-sm" />
             <div className="flex flex-col">
-              <span className="text-lg font-bold bg-gradient-to-r from-primary via-primary to-teal-light bg-clip-text text-transparent leading-tight">
+              <span className="text-lg font-bold font-serif text-white leading-tight">
                 Sunlit Centre Kenya
               </span>
-              <span className="text-[10px] tracking-wider font-semibold text-gray-400 leading-tight">
+              <span className="text-[10px] tracking-[0.2em] font-semibold uppercase text-cta leading-tight">
                 Dependable, Professional Partnership
               </span>
             </div>
@@ -74,7 +74,7 @@ const Navbar = () => {
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-medium bg-transparent hover:bg-accent">
+                  <NavigationMenuTrigger className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
                     Services
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -85,7 +85,7 @@ const Navbar = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-medium bg-transparent hover:bg-accent">
+                  <NavigationMenuTrigger className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
                     Jobs
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -97,7 +97,7 @@ const Navbar = () => {
 
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link to="/contact-us" className="text-sm font-medium bg-transparent">
+                    <Link to="/contact-us" className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white">
                       Contact Us
                     </Link>
                   </NavigationMenuLink>
@@ -126,8 +126,9 @@ const Navbar = () => {
                 </div>
               ) : (
                 <Button
+                  variant="cta"
                   size="sm"
-                  className="ml-3 bg-primary text-primary-foreground hover:bg-primary/90 text-sm"
+                  className="ml-3 uppercase tracking-wider text-xs px-5"
                   asChild
                 >
                   <Link to="/login-register">Login / Register</Link>
@@ -139,7 +140,7 @@ const Navbar = () => {
           {/* Mobile hamburger */}
           <div className="lg:hidden">
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon"><Menu /></Button>
+              <Button variant="outline" size="icon" className="bg-transparent border-white/40 text-white hover:bg-white/10 hover:text-white"><Menu /></Button>
             </SheetTrigger>
           </div>
         </div>
@@ -150,7 +151,7 @@ const Navbar = () => {
         <SheetHeader className="flex-row items-center justify-between p-4 border-b">
           <a href="/" className="flex items-center gap-2">
             <img src="/logo.png" alt="Sunlit Centre Kenya" className="h-9 w-auto object-contain" />
-            <span className="text-base font-bold bg-gradient-to-r from-primary via-primary to-teal-light bg-clip-text text-transparent">
+            <span className="text-base font-bold font-serif text-primary">
               Sunlit Centre Kenya
             </span>
           </a>

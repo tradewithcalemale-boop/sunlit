@@ -12,7 +12,7 @@ const Footer = () => {
               <span className="text-xl font-bold font-serif">
                 Sunlit Centre Kenya
               </span>
-              <p className="text-xs tracking-wider mt-1">
+              <p className="text-sm font-semibold text-cta tracking-wide mt-1">
                 Dependable, Professional Partnership
               </p>
             </div>
@@ -20,7 +20,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-semibold mb-4 text-cta uppercase tracking-wider text-sm">Quick Links</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li>
                 <Link to="/our-services" className="hover:text-cta transition-colors">
@@ -57,7 +57,7 @@ const Footer = () => {
 
           {/* Services */}
           <div>
-            <h4 className="font-semibold mb-4">Services</h4>
+            <h4 className="font-semibold mb-4 text-cta uppercase tracking-wider text-sm">Services</h4>
             <ul className="space-y-2 text-sm text-primary-foreground/70">
               <li>
                 <Link to="/our-services" className="hover:text-cta transition-colors">
@@ -99,7 +99,7 @@ const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-semibold mb-4">Contact</h4>
+            <h4 className="font-semibold mb-4 text-cta uppercase tracking-wider text-sm">Contact</h4>
             <ul className="space-y-3 text-sm text-primary-foreground/70">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />

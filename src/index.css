@@ -84,8 +84,9 @@
 }
 
 @layer components {
+  /* Homepage hero — light silver with a soft diagonal streak (jhammer style) */
   .hero-bg {
-    background: linear-gradient(135deg, hsl(225 85% 10%) 0%, hsl(220 70% 14%) 55%, hsl(200 65% 20%) 100%);
+    background: linear-gradient(105deg, #e9eaec 0%, #eef0f2 45%, #dfe1e4 55%, #eceef0 100%);
   }
 
   .hero-bg-new {
@@ -131,29 +132,23 @@
     );
   }
 
-  /* Top utility bar — navy with cyan/mint sweep (jhammer brand bar) */
+  /* Top utility bar — bright mint→teal sweep (jhammer brand bar) */
   .gradient-rainbow-bar {
-    background: linear-gradient(
-      90deg,
-      #040f30 0%,
-      #072050 55%,
-      #5fcad8 100%
-    );
+    background: linear-gradient(90deg, #01ffd1 0%, #2fd9cf 55%, #5fcad8 100%);
   }
 
-  /* Signature framed-photo treatment (jhammer "ladies in a frame") */
-  .jh-photo-frame {
-    position: relative;
+  /* Bright teal→mint band used for CTA sections */
+  .cta-band {
+    background: linear-gradient(120deg, #5fcad8 0%, #2fd9cf 45%, #01ffd1 100%);
   }
-  .jh-photo-frame::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    transform: translate(1.25rem, 1.25rem);
-    border: 3px solid hsl(169 99% 50%);
-    border-radius: 1rem;
-    z-index: 0;
-    pointer-events: none;
+
+  /* Circular portrait with a thin mint ring (jhammer hero photo) */
+  .jh-photo-ring {
+    position: relative;
+    border-radius: 9999px;
+    padding: 6px;
+    background: transparent;
+    box-shadow: 0 0 0 2px hsl(169 99% 55% / 0.9);
   }
 
   .logo-scroll {
