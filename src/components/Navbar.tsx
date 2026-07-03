@@ -1,4 +1,4 @@
-import { Menu, X, LogOut, User } from "lucide-react";
+import { Menu, X, LogOut, User, Mail, Phone, ChevronRight } from "lucide-react";
 import {
   Sheet, SheetContent, SheetHeader, SheetTrigger, SheetClose,
 } from "./ui/sheet";
@@ -159,71 +159,138 @@ const Navbar = () => {
       </nav>
 
       {/* Mobile sidebar */}
-      <SheetContent side="left" className="w-[22rem] bg-background p-0 [&>button]:hidden">
-        <SheetHeader className="flex-row items-center justify-between p-4 border-b">
-          <a href="/" className="flex items-center gap-2">
-            <img src="/logo.png" alt="Sunlit Centre Kenya" className="h-9 w-auto object-contain" />
-            <span className="text-base font-bold font-serif text-primary">
+      <SheetContent
+        side="left"
+        className="w-[86vw] max-w-[20rem] bg-hero text-white p-0 gap-0 flex flex-col border-r border-white/10 [&>button]:hidden"
+      >
+        {/* Header */}
+        <SheetHeader className="flex-row items-center justify-between px-5 py-4 border-b border-white/10 space-y-0">
+          <a href="/" className="flex items-center gap-2 min-w-0">
+            <img src="/logo.png" alt="Sunlit Centre Kenya" className="h-9 w-auto object-contain flex-shrink-0" />
+            <span className="text-base font-bold font-serif text-white truncate">
               Sunlit Centre Kenya
             </span>
           </a>
           <SheetClose asChild>
-            <Button variant="ghost" size="icon"><X /></Button>
+            <Button variant="ghost" size="icon" className="text-white hover:bg-white/10 hover:text-white flex-shrink-0">
+              <X className="w-5 h-5" />
+            </Button>
           </SheetClose>
         </SheetHeader>
 
-        <div className="p-4 overflow-y-auto">
-          {/* Logged-in user badge (mobile) */}
+        {/* Scrollable nav body */}
+        <div className="flex-1 overflow-y-auto px-5 py-6 space-y-7">
+          {/* Logged-in user badge */}
           {isAuthenticated && (
-            <div className="flex items-center gap-2 bg-secondary rounded-lg px-3 py-2.5 mb-4">
-              <div className="w-7 h-7 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <div className="flex items-center gap-3 bg-white/5 ring-1 ring-white/10 rounded-xl px-3 py-3">
+              <div className="w-9 h-9 rounded-full bg-cta flex items-center justify-center flex-shrink-0">
                 <User className="w-4 h-4 text-white" />
               </div>
-              <div>
-                <p className="text-xs text-muted-foreground">Signed in as</p>
-                <p className="text-sm font-medium truncate">{user?.email}</p>
+              <div className="min-w-0">
+                <p className="text-[11px] uppercase tracking-wider text-white/50">Signed in as</p>
+                <p className="text-sm font-medium truncate text-white">{user?.email}</p>
               </div>
             </div>
           )}
 
-          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-2">Services</p>
-          <ul className="mb-4">
-            {servicesItems.map((item) => (
-              <li key={item.href}>
+          {/* Services group */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-cta pb-2 mb-2 border-b border-teal-light/40">
+              By Solution
+            </p>
+            <ul className="-mx-2">
+              {servicesItems.map((item) => (
+                <li key={item.href}>
+                  <SheetClose asChild>
+                    <Link
+                      to={item.href}
+                      className="group flex items-start gap-3 rounded-lg px-2 py-2.5 hover:bg-white/10 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-white group-hover:text-cyan-accent transition-colors">{item.label}</p>
+                        <p className="text-xs text-white/50 leading-snug truncate">{item.desc}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 mt-0.5 text-white/30 group-hover:text-cyan-accent flex-shrink-0" />
+                    </Link>
+                  </SheetClose>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Jobs group */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-cta pb-2 mb-2 border-b border-teal-light/40">
+              Opportunities
+            </p>
+            <ul className="-mx-2">
+              {jobsItems.map((item) => (
+                <li key={item.href}>
+                  <SheetClose asChild>
+                    <Link
+                      to={item.href}
+                      className="group flex items-start gap-3 rounded-lg px-2 py-2.5 hover:bg-white/10 transition-colors"
+                    >
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-semibold text-white group-hover:text-cyan-accent transition-colors">{item.label}</p>
+                        <p className="text-xs text-white/50 leading-snug truncate">{item.desc}</p>
+                      </div>
+                      <ChevronRight className="w-4 h-4 mt-0.5 text-white/30 group-hover:text-cyan-accent flex-shrink-0" />
+                    </Link>
+                  </SheetClose>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* More group */}
+          <div>
+            <p className="text-[11px] font-bold uppercase tracking-widest text-cta pb-2 mb-2 border-b border-teal-light/40">
+              More
+            </p>
+            <ul className="-mx-2">
+              <li>
                 <SheetClose asChild>
-                  <Link to={item.href} className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent">{item.label}</Link>
+                  <Link
+                    to="/contact-us"
+                    className="group flex items-center justify-between rounded-lg px-2 py-2.5 hover:bg-white/10 transition-colors"
+                  >
+                    <span className="text-sm font-semibold text-white group-hover:text-cyan-accent transition-colors">Contact Us</span>
+                    <ChevronRight className="w-4 h-4 text-white/30 group-hover:text-cyan-accent" />
+                  </Link>
                 </SheetClose>
               </li>
-            ))}
-          </ul>
+            </ul>
+          </div>
+        </div>
 
-          <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider mb-2 px-2">Jobs</p>
-          <ul className="mb-4">
-            {jobsItems.map((item) => (
-              <li key={item.href}>
-                <SheetClose asChild>
-                  <Link to={item.href} className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent">{item.label}</Link>
-                </SheetClose>
-              </li>
-            ))}
-          </ul>
-
-          <div className="border-t border-border pt-4 space-y-1">
+        {/* Sticky footer: CTA + contact */}
+        <div className="border-t border-white/10 px-5 py-5 space-y-4">
+          {isAuthenticated ? (
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="w-full bg-transparent border-white/30 text-white hover:bg-white/10 hover:text-white gap-2"
+            >
+              <LogOut className="w-4 h-4" /> Sign Out
+            </Button>
+          ) : (
             <SheetClose asChild>
-              <Link to="/contact-us" className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent">Contact Us</Link>
+              <Button variant="cta" size="lg" className="w-full uppercase tracking-wider text-xs" asChild>
+                <Link to="/login-register">Login / Register</Link>
+              </Button>
             </SheetClose>
-            {isAuthenticated ? (
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-2 w-full rounded-md px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50"
-              >
-                <LogOut className="w-4 h-4" /> Sign Out
-              </button>
-            ) : (
-              <SheetClose asChild>
-                <Link to="/login-register" className="block rounded-md px-3 py-2.5 text-sm font-medium hover:bg-accent">Login / Register</Link>
-              </SheetClose>
-            )}
+          )}
+
+          <div className="space-y-2 pt-1">
+            <a href="mailto:info@sunlitcentrekenya.co.ke" className="flex items-center gap-2.5 text-xs text-white/70 hover:text-cyan-accent transition-colors">
+              <Mail className="w-3.5 h-3.5 flex-shrink-0" />
+              <span className="truncate">info@sunlitcentrekenya.co.ke</span>
+            </a>
+            <a href="tel:+254737687881" className="flex items-center gap-2.5 text-xs text-white/70 hover:text-cyan-accent transition-colors">
+              <Phone className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>+(254) 0737 687 881</span>
+            </a>
           </div>
         </div>
       </SheetContent>
