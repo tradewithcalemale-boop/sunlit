@@ -1,17 +1,26 @@
 
-import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
-import TopBar from "@/components/TopBar";
+import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { Slide } from "react-awesome-reveal";
+import {
+  Users, Briefcase, Building2, Search, GraduationCap, BarChart2, Megaphone, ArrowRight, CheckCircle,
+} from "lucide-react";
 
 const services = [
   {
     id: "human-resource-consulting",
+    icon: Users,
     title: "Human Resource Consulting",
-    description: "Tailored HR services to meet your unique needs, increasing competitiveness and operational efficiency.",
-    content: "We always purpose to understand the needs of our clients and effectively collaborate with our clients to tailor their HR services to meet their unique needs. This ultimately increases the competitiveness of the company within the industry since they are able to address the gaps and act on weak areas as they leverage their strengths. More so the client is able to fully engage its resource in the areas where they suit and thus cut on the overall cost brought about by inefficiency, wastage, delays, which saves on overall operational costs.",
+    tagline: "Tailored HR strategies that reduce costs and sharpen your competitive edge.",
+    description:
+      "We always purpose to understand the needs of our clients and effectively collaborate with them to tailor HR services that meet their unique needs. This ultimately increases the competitiveness of the company within the industry since they can address gaps, act on weak areas, and leverage their strengths.",
     subServices: [
       "Job Analysis and Evaluation",
       "Staff Training and Development",
@@ -21,133 +30,181 @@ const services = [
       "Employee Satisfaction Surveys",
       "Human Resource Audit",
       "Human Resource Information System",
-      "Organizational Development/Restructuring",
+      "Organizational Development / Restructuring",
     ],
   },
   {
     id: "employee-recruitment",
+    icon: Briefcase,
     title: "Employee Recruitment, Selection & Retention",
-    description: "Finding and retaining the best talent through a thorough and integrity-driven selection process.",
-    content: "We measure our success in terms of our clients’ return on investment in talent attraction and retention. A successful selection produces candidates of high quality and results from a selection process with thoroughness and integrity our clients can testify to. While following our thorough selection process, we pay attention to detail and emphasize open, honest, and ongoing communication with the client. Without the right people, strategies are just papers on shelves. We can put your mind at rest by getting the best person for the job and at the same time make sure that you do everything by the book from a legal perspective. We can help you with your one-off appointments or major recruitment drives by completing the whole process or a part of the process like writing a particular job description or selection criteria -no job is too big or small.",
+    tagline: "Find and keep the best talent through a thorough, integrity-driven process.",
+    description:
+      "We measure our success in terms of our clients' return on investment in talent attraction and retention. A successful selection produces candidates of high quality through thoroughness and integrity our clients can testify to. Without the right people, strategies are just papers on shelves. No job is too big or small — we handle everything from a single appointment to major recruitment drives.",
     subServices: [],
   },
   {
     id: "outsourced-hr-services",
+    icon: Building2,
     title: "Outsourced HR Services",
-    description: "Comprehensive HR management, from recruitment to payroll, so you can focus on your core business.",
-    content: "We offer employee outsourcing to local and non-local companies. We take all the HR responsibilities as the client focuses on the core functions of the business. We carry out the staff recruitment and selection, staff induction, issue employment contracts under our name, process the staff payroll, make payment distribution, remit employee’s taxes and statutory payments, issue payslips, and ensure day to day employee engagement and management on behalf of the client. Every company must measure, manage, and improve its performance if it is to survive and your business is no exception.",
+    tagline: "Full HR management so your team can focus on your core business.",
+    description:
+      "We offer employee outsourcing to local and international companies, taking on all HR responsibilities while the client focuses on core functions. We handle recruitment, induction, employment contracts, payroll processing, statutory payments, payslips, and day-to-day employee engagement.",
     subServices: [
       "Payroll Administration",
-      "Ad-hoc Support (i.e. Market Research & Surveys)",
-      "HR Helplines",
-      "HR Advice",
-      "Certain Amount Of Days On Site Per Month",
+      "Ad-hoc Support (Market Research & Surveys)",
+      "HR Helplines & Advice",
       "Benefits Administration",
-      "HR Systems",
-      "HR Materials",
-      "Personnel Administration among others",
+      "HR Systems & Materials",
+      "Personnel Administration",
     ],
   },
   {
     id: "head-hunting",
-    title: "Head Hunting/Executive Search",
-    description: "Finding, attracting, and retaining the best people in the market to give your business a competitive edge.",
-    content: "People. People. People. The only treasure businesses ride on. They are the face of the business and therefore without them, strategies are just papers on shelves. Businesses that have recognized their human resources as valuable assets have a comprehensive competitive advantage over others. Top talent cannot be sourced through adverts and thus we step in to deliver the most committed and competent talent and while we help your business attain this status. Our core business on executive search is to help you find, attract, motivate, and retain the best people in the market.",
+    icon: Search,
+    title: "Head Hunting / Executive Search",
+    tagline: "Attract and retain exceptional leadership talent for a decisive competitive advantage.",
+    description:
+      "People are the only treasure businesses truly ride on. Businesses that recognise their human resources as valuable assets have a comprehensive competitive advantage. Top talent cannot be sourced through adverts — we step in to deliver the most committed and competent leaders, helping you find, attract, motivate, and retain the best people in the market.",
     subServices: [],
   },
   {
     id: "training-development",
+    icon: GraduationCap,
     title: "Training & Development",
-    description: "Optimizing human capital through need-based training and development programs.",
-    content: "We recognize that in order to optimize human capital, need-based training is vital. We offer an unrivaled range of training and development services. Our team will also help you with projects such as designing competency frameworks, training plans, training needs analysis, training department set up and training consulting. We thus collaborate with clients to understand their strategic focus and help them to design a training program that helps them to attain the desired outcome. We also recognize that some training is required in order to meet legal legislation and thus to ensure compliance, we assist in such training i.e OSH training (fire marshals training, First Aid Training, and Occupational Safety and Health training) in consultation with OSH experts.",
+    tagline: "Need-based training programmes that translate directly into performance gains.",
+    description:
+      "We recognise that to optimise human capital, need-based training is vital. Our team helps design competency frameworks, training plans, needs analysis, and training department setups. We collaborate with clients to understand their strategic focus and design programmes for desired outcomes — including OSH compliance training.",
     subServices: [
-        "Team Work & Team Building training",
-        "Leadership training",
-        "Emotional Intelligence training",
-        "Strategic Management in the Public Sector training",
-        "Successful Female Leader training",
-        "Advanced Presentation Skills training",
-        "Best Foot Forward training",
-        "Sales training",
-        "Finance training",
+      "Team Work & Team Building",
+      "Leadership Training",
+      "Emotional Intelligence",
+      "Strategic Management in the Public Sector",
+      "Successful Female Leader",
+      "Advanced Presentation Skills",
+      "Sales Training",
+      "Finance Training",
     ],
   },
   {
     id: "psychometric-assessments",
+    icon: BarChart2,
     title: "Psychometric Assessments",
-    description: "Enhancing the recruitment process by providing evidence of ability, potential, and culture fit.",
-    content: "Psychometric tests greatly enhance the recruitment process by providing evidence of ability or potential in a particular area that may not have been captured during the normal interview process. This mostly assists companies to identify a culture match which is very vital for new employee’s adoption of the company and also his future performance. At Sunlit Centre Kenya, we provide this service at an affordable rate and also share a report which summarizes the candidate’s cognitive abilities, behavioral traits, and interests. These tools further provide additional particular traits as per the job description of the job as specified by the client.",
+    tagline: "Objective evidence of ability, potential, and culture fit beyond the interview.",
+    description:
+      "Psychometric tests greatly enhance the recruitment process by providing evidence of ability or potential that may not surface in a normal interview. They help identify culture match — vital for new-employee adoption and future performance. We provide this service at an affordable rate, delivering a comprehensive report on cognitive abilities, behavioural traits, and interests.",
     subServices: [],
   },
   {
     id: "content-marketing",
+    icon: Megaphone,
     title: "Content Marketing",
-    description: "Connecting you with your target audience through meaningful, data-driven content marketing solutions.",
-    content: "Make your connection more meaningful with Sunlit Centre Kenya’s content marketing solutions. Powered by AI and machine learning, it automatically puts the right messages in front of a aRandom rand()om people – guiding them down the recruiting funnel toward conversion quickly, seamlessly, and efficiently. Want to reach people in Marketing and Advertising? We over modern solutions for a marketing strategy company depending on the demographics and relevant targeted audience. Unlike most out of home advertisers, Sunlit Centre Kenya allows advertisers to select dayparts down to the week(s), rotating ads and targeting lifestyles.",
+    tagline: "AI-powered content solutions that guide the right people to your brand.",
+    description:
+      "Make your connection more meaningful with Sunlit Centre Kenya's content marketing solutions. Powered by AI and machine learning, it automatically puts the right messages in front of the right people — guiding them through the recruiting funnel towards conversion quickly, seamlessly, and efficiently. We offer modern solutions for targeted marketing with flexible day-part scheduling.",
     subServices: [],
   },
 ];
 
 const OurServices = () => {
-  const scrollToService = (id: string) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: "smooth" });
-    }
-  };
+  const [selected, setSelected] = useState<typeof services[0] | null>(null);
 
   return (
     <div className="bg-background text-foreground">
-      <TopBar />
       <Navbar />
-      <Hero title="What we offer" imageSrc="https://i.ibb.co/RTYskxLv/image.png" />
+      <Hero title="What We Offer" imageSrc="https://i.ibb.co/RTYskxLv/image.png" />
 
-      {/* Services Grid */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="text-center mb-12">
-            <h1 className="text-4xl md:text-6xl font-serif bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">Our Services</h1>
-        </div>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {services.map((service) => (
-            <div
-              key={service.id}
-              className="border p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => scrollToService(service.id)}
-            >
-              <h3 className="font-semibold text-xl mb-2">{service.title}</h3>
-              <p className="text-muted-foreground text-sm mb-4">{service.description}</p>
-              <span className="text-cta font-semibold flex items-center">
-                Learn More <ArrowRight className="w-4 h-4 ml-2" />
-              </span>
-            </div>
+      {/* Intro */}
+      <section className="py-16 container mx-auto px-4 text-center max-w-2xl">
+        <h2 className="text-3xl md:text-4xl font-serif font-bold mb-4 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 bg-clip-text text-transparent">
+          Our Services
+        </h2>
+        <p className="text-muted-foreground text-lg">
+          We deliver tailored HR, recruitment, and organisational development solutions
+          for businesses of every size across East Africa and beyond.
+        </p>
+      </section>
+
+      {/* Services grid */}
+      <section className="pb-20 container mx-auto px-4">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {services.map((svc, i) => (
+            <Slide key={svc.id} direction="up" triggerOnce delay={i * 70}>
+              <div
+                className="bg-white border border-border rounded-2xl p-6 hover:shadow-lg transition-all cursor-pointer group hover:border-primary/40 h-full flex flex-col"
+                onClick={() => setSelected(svc)}
+              >
+                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                  <svc.icon className="w-6 h-6 text-primary" />
+                </div>
+                <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
+                  {svc.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed flex-1">{svc.tagline}</p>
+                <div className="mt-4 flex items-center gap-1 text-cta text-sm font-semibold">
+                  Learn More <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                </div>
+              </div>
+            </Slide>
           ))}
         </div>
       </section>
 
-      {/* Detailed Services Section */}
-      <div className="container mx-auto px-4">
-        {services.map((service, index) => (
-          <section
-            key={service.id}
-            id={service.id}
-            className={`py-16 ${index < services.length - 1 ? 'border-b' : ''}`}
-          >
-            <h2 className="text-3xl font-serif mb-4">{service.title}</h2>
-            <p className="text-muted-foreground mb-6 whitespace-pre-line">{service.content}</p>
-            {service.subServices.length > 0 && (
-              <div>
-                <h4 className="font-semibold text-lg mb-3">Key areas include:</h4>
-                <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                  {service.subServices.map((sub) => (
-                    <li key={sub}>{sub}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </section>
-        ))}
-      </div>
+      {/* CTA */}
+      <section className="bg-secondary py-14">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-2xl font-serif font-bold mb-3">Ready to transform your organisation?</h2>
+          <p className="text-muted-foreground mb-6 max-w-lg mx-auto">
+            Talk to our HR experts and discover how we can support your goals.
+          </p>
+          <Button variant="cta" size="lg" asChild>
+            <Link to="/contact-us">Get in Touch</Link>
+          </Button>
+        </div>
+      </section>
+
       <Footer />
+
+      {/* Service detail modal */}
+      <Dialog open={!!selected} onOpenChange={() => setSelected(null)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto">
+          <DialogHeader>
+            <div className="flex items-center gap-3 mb-1">
+              {selected && (
+                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <selected.icon className="w-5 h-5 text-primary" />
+                </div>
+              )}
+              <DialogTitle className="text-xl font-serif">{selected?.title}</DialogTitle>
+            </div>
+          </DialogHeader>
+          {selected && (
+            <div className="space-y-5 text-sm">
+              <p className="text-base text-foreground font-medium italic border-l-4 border-cta pl-4">
+                {selected.tagline}
+              </p>
+              <p className="text-muted-foreground leading-relaxed">{selected.description}</p>
+              {selected.subServices.length > 0 && (
+                <div>
+                  <h4 className="font-semibold text-foreground mb-3">Key areas include:</h4>
+                  <div className="grid sm:grid-cols-2 gap-2">
+                    {selected.subServices.map((sub) => (
+                      <div key={sub} className="flex items-start gap-2">
+                        <CheckCircle className="w-4 h-4 text-green-500 flex-shrink-0 mt-0.5" />
+                        <span className="text-muted-foreground">{sub}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              <div className="pt-2">
+                <Button variant="cta" asChild onClick={() => setSelected(null)}>
+                  <Link to="/contact-us">Enquire About This Service</Link>
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

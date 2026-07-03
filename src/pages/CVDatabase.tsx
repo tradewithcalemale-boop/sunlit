@@ -1,5 +1,4 @@
 
-import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
@@ -7,7 +6,6 @@ import Footer from "@/components/Footer";
 const CVDatabase = () => {
   return (
     <div className="bg-background text-foreground">
-      <TopBar />
       <Navbar />
       <Hero title="CV Database" imageSrc="https://i.ibb.co/rKjQDb7q/image.png" />
       <section className="container mx-auto px-4 py-16">

@@ -1,4 +1,3 @@
-import TopBar from "@/components/TopBar";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Services from "@/components/Services";
@@ -9,40 +8,25 @@ import JobOpportunities from "@/components/Testimonials";
 import Resources from "@/components/Resources";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
-import { Fade } from "react-awesome-reveal";
+import { Slide } from "react-awesome-reveal";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
-      <TopBar />
       <Navbar />
-      <Fade>
-        <Hero />
-      </Fade>
-      <Fade>
+      <Hero />
+      <Slide direction="left" triggerOnce fraction={0.15}>
         <Services />
-      </Fade>
-      <Fade>
+      </Slide>
+      <Slide direction="right" triggerOnce fraction={0.15}>
         <About />
-      </Fade>
-      <Fade>
-        <Stats />
-      </Fade>
-      <Fade>
-        <ClientLogos />
-      </Fade>
-      <Fade>
-        <JobOpportunities />
-      </Fade>
-      <Fade>
-        <Resources />
-      </Fade>
-      <Fade>
-        <CTASection />
-      </Fade>
-      <Fade>
-        <Footer />
-      </Fade>
+      </Slide>
+      <Stats />
+      <ClientLogos />
+      <JobOpportunities />
+      <Resources />
+      <CTASection />
+      <Footer />
     </div>
   );
 };
