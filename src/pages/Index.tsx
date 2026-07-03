@@ -15,9 +15,7 @@ const Index = () => {
     <div className="min-h-screen">
       <Navbar />
       <Hero />
-      <Slide direction="left" triggerOnce fraction={0.15}>
-        <Services />
-      </Slide>
+      <Services />
       <Slide direction="right" triggerOnce fraction={0.15}>
         <About />
       </Slide>

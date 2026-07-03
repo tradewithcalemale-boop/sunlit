@@ -32,13 +32,19 @@ const DropItem = ({ label, href, desc }: { label: string; href: string; desc: st
     <NavigationMenuLink asChild>
       <Link
         to={href}
-        className="block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground"
+        className="group/item block select-none rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-white/10"
       >
-        <div className="text-sm font-medium leading-none mb-1">{label}</div>
-        <p className="text-xs leading-snug text-muted-foreground">{desc}</p>
+        <div className="text-sm font-semibold uppercase tracking-wide leading-none mb-1 text-white group-hover/item:text-cyan-accent transition-colors">{label}</div>
+        <p className="text-xs leading-snug text-white/60">{desc}</p>
       </Link>
     </NavigationMenuLink>
   </li>
+);
+
+const MegaHeader = ({ children }: { children: string }) => (
+  <p className="text-xs font-bold uppercase tracking-widest text-cta pb-2 mb-2 border-b border-teal-light/50">
+    {children}
+  </p>
 );
 
 const Navbar = () => {
@@ -78,9 +84,12 @@ const Navbar = () => {
                     Services
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[380px] gap-1 p-3">
-                      {servicesItems.map((item) => <DropItem key={item.href} {...item} />)}
-                    </ul>
+                    <div className="w-[380px] p-5">
+                      <MegaHeader>By Solution</MegaHeader>
+                      <ul className="grid gap-1">
+                        {servicesItems.map((item) => <DropItem key={item.href} {...item} />)}
+                      </ul>
+                    </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
@@ -89,9 +98,12 @@ const Navbar = () => {
                     Jobs
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
-                    <ul className="grid w-[340px] gap-1 p-3">
-                      {jobsItems.map((item) => <DropItem key={item.href} {...item} />)}
-                    </ul>
+                    <div className="w-[340px] p-5">
+                      <MegaHeader>Opportunities</MegaHeader>
+                      <ul className="grid gap-1">
+                        {jobsItems.map((item) => <DropItem key={item.href} {...item} />)}
+                      </ul>
+                    </div>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
 
