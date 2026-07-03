@@ -69,27 +69,27 @@ const Navbar = () => {
       {/* Top utility bar — large screens only */}
       <TopBar />
 
-      <nav className="bg-hero py-4 px-4 sticky top-0 z-50 shadow-md border-b border-white/10">
+      <nav className="bg-hero py-5 lg:py-7 px-4 sticky top-0 z-50 shadow-md border-b border-white/10">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-2 flex-shrink-0">
-            <img src="/logo.png" alt="Sunlit Centre Kenya Logo" className="h-10 w-auto object-contain drop-shadow-sm" />
-            <div className="flex flex-col">
-              <span className="text-lg font-bold font-serif text-white leading-tight">
+          <a href="/" className="flex items-center gap-3 flex-shrink-0">
+            <img src="/logo.png" alt="Sunlit Centre Kenya Logo" className="h-12 lg:h-16 w-auto object-contain drop-shadow-sm" />
+            <div className="flex flex-col justify-center">
+              <span className="text-xl lg:text-2xl font-bold font-serif text-white leading-none tracking-tight">
                 Sunlit Centre Kenya
               </span>
-              <span className="text-[10px] tracking-[0.2em] font-semibold uppercase text-cta leading-tight">
+              <span className="text-[10px] lg:text-[11px] tracking-[0.22em] font-semibold uppercase text-cta leading-none mt-1.5">
                 Dependable, Professional Partnership
               </span>
             </div>
           </a>
 
           {/* Desktop nav */}
-          <div className="hidden lg:flex items-center gap-1">
+          <div className="hidden lg:flex items-center gap-3">
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
+                  <NavigationMenuTrigger className="text-sm font-semibold uppercase tracking-wide text-white px-5 bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
                     What We Do
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -111,7 +111,7 @@ const Navbar = () => {
                 </NavigationMenuItem>
 
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
+                  <NavigationMenuTrigger className="text-sm font-semibold uppercase tracking-wide text-white px-5 bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white data-[state=open]:bg-white/10 data-[state=open]:text-white data-[active]:bg-white/10">
                     Jobs
                   </NavigationMenuTrigger>
                   <NavigationMenuContent>
@@ -126,7 +126,7 @@ const Navbar = () => {
 
                 <NavigationMenuItem>
                   <NavigationMenuLink asChild className={navigationMenuTriggerStyle()}>
-                    <Link to="/contact-us" className="text-xs font-semibold uppercase tracking-wider text-white bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white">
+                    <Link to="/contact-us" className="text-sm font-semibold uppercase tracking-wide text-white px-5 bg-transparent hover:bg-white/10 hover:text-white focus:bg-white/10 focus:text-white">
                       Contact Us
                     </Link>
                   </NavigationMenuLink>
@@ -156,8 +156,8 @@ const Navbar = () => {
               ) : (
                 <Button
                   variant="cta"
-                  size="sm"
-                  className="ml-3 uppercase tracking-wider text-xs px-5"
+                  size="lg"
+                  className="ml-4 uppercase tracking-wider text-sm px-8 h-12"
                   asChild
                 >
                   <Link to="/login-register">Login / Register</Link>
