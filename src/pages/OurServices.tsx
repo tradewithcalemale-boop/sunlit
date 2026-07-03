@@ -7,6 +7,7 @@ import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import BrushIcon from "@/components/BrushIcon";
 import { Link } from "react-router-dom";
 import { Slide } from "react-awesome-reveal";
 import {
@@ -133,9 +134,7 @@ const OurServices = () => {
                 className="bg-white border border-border rounded-2xl p-6 hover:shadow-lg transition-all cursor-pointer group hover:border-primary/40 h-full flex flex-col"
                 onClick={() => setSelected(svc)}
               >
-                <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                  <svc.icon className="w-6 h-6 text-primary" />
-                </div>
+                <BrushIcon icon={svc.icon} className="mb-4" />
                 <h3 className="text-lg font-semibold mb-2 group-hover:text-primary transition-colors">
                   {svc.title}
                 </h3>
@@ -170,8 +169,8 @@ const OurServices = () => {
           <DialogHeader>
             <div className="flex items-center gap-3 mb-1">
               {selected && (
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <selected.icon className="w-5 h-5 text-primary" />
+                <div className="w-10 h-10 rounded-lg bg-cta/10 flex items-center justify-center">
+                  <selected.icon className="w-5 h-5 text-cta" strokeWidth={1.5} />
                 </div>
               )}
               <DialogTitle className="text-xl font-serif">{selected?.title}</DialogTitle>

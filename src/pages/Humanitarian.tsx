@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import BrushIcon from "@/components/BrushIcon";
 import { Slide } from "react-awesome-reveal";
 import { Link } from "react-router-dom";
 import {
@@ -97,9 +98,7 @@ const Humanitarian = () => {
             {services.map((service, i) => (
               <Slide key={service.title} direction="up" triggerOnce delay={i * 80}>
                 <div className="bg-background rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow h-full">
-                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                    <service.icon className="w-6 h-6 text-primary" />
-                  </div>
+                  <BrushIcon icon={service.icon} className="mb-4" />
                   <h3 className="text-lg font-semibold mb-2">{service.title}</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     {service.description}

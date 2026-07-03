@@ -1,6 +1,7 @@
 import { Slide, JackInTheBox } from "react-awesome-reveal";
 import { Search, Users, Briefcase, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import BrushIcon from "@/components/BrushIcon";
 import { Link } from "react-router-dom";
 
 const offerings = [
@@ -45,13 +46,10 @@ const Services = () => {
 
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6 pb-20">
             {offerings.map((item, i) => {
-              const Icon = item.icon;
               return (
                 <Slide direction="up" triggerOnce fraction={0.1} delay={i * 80} key={item.title}>
                   <div className="bg-white rounded-lg shadow-lg p-8 text-center h-full flex flex-col items-center">
-                    <div className="w-14 h-14 rounded-full bg-cta/10 flex items-center justify-center mb-5">
-                      <Icon className="w-7 h-7 text-cta" strokeWidth={1.5} />
-                    </div>
+                    <BrushIcon icon={item.icon} align="center" className="mb-5" />
                     <h3 className="text-xl font-serif font-semibold text-teal-light mb-3">
                       {item.title}
                     </h3>
