@@ -39,7 +39,7 @@ const Hero = ({ title, imageSrc }: { title?: string; imageSrc?: string }) => {
 
           {/* Right Content - Circular Portrait with thin mint ring (jhammer style) */}
           <div className="relative flex justify-center lg:justify-end">
-            <div className="jh-photo-ring w-72 h-72 sm:w-80 sm:h-80 lg:w-[440px] lg:h-[440px]">
+            <div className="jh-photo-ring hero-photo-float w-72 h-72 sm:w-80 sm:h-80 lg:w-[440px] lg:h-[440px]">
               <div className="w-full h-full rounded-full overflow-hidden shadow-2xl">
                 <img
                   src={imageSrc || heroLeader}

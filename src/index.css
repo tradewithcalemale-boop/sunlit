@@ -164,6 +164,24 @@
   }
 }
 
+/* Hero portrait gentle float — mobile / tablet only; static on large screens */
+@keyframes heroFloat {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-18px);
+  }
+}
+
+@media (max-width: 1023px) {
+  .hero-photo-float {
+    animation: heroFloat 3.6s ease-in-out infinite;
+    will-change: transform;
+  }
+}
+
 @keyframes scroll {
   0% {
     transform: translateX(0);
