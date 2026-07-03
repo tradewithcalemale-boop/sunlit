@@ -134,10 +134,10 @@ const ViewJobs = () => {
       {/* Hero search bar */}
       <div className="hero-bg py-14">
         <div className="container mx-auto px-4">
-          <h1 className="text-3xl md:text-4xl font-serif text-white font-bold text-center mb-2">
+          <h1 className="text-3xl md:text-4xl font-serif text-primary font-extrabold text-center mb-2">
             Find Your Next Opportunity
           </h1>
-          <p className="text-white/70 text-center mb-8">
+          <p className="text-slate-600 text-center mb-8">
             {allJobs.length > 0 ? `${allJobs.length} active jobs across Kenya and East Africa` : "Explore careers across Kenya and East Africa"}
           </p>
           <div className="bg-white rounded-2xl p-2 shadow-xl flex flex-col md:flex-row gap-2 max-w-3xl mx-auto">

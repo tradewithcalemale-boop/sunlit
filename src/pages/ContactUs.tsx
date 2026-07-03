@@ -97,7 +97,7 @@ const ContactUs = () => {
                 {error && (
                   <div className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</div>
                 )}
-                <Button type="submit" disabled={loading}>
+                <Button type="submit" variant="cta" size="lg" disabled={loading}>
                   {loading ? "Sending…" : "Send Message"}
                 </Button>
               </form>

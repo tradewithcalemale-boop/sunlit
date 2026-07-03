@@ -84,9 +84,13 @@
 }
 
 @layer components {
-  /* Homepage hero — light silver with a soft diagonal streak (jhammer style) */
+  /* Homepage hero — warm taupe with diagonal "Y" light streaks (jhammer style) */
   .hero-bg {
-    background: linear-gradient(105deg, #e9eaec 0%, #eef0f2 45%, #dfe1e4 55%, #eceef0 100%);
+    background-color: #c8c5c0;
+    background-image:
+      linear-gradient(118deg, transparent 57%, rgba(230,228,223,0.85) 57%, rgba(230,228,223,0.85) 65%, transparent 65%),
+      linear-gradient(72deg, transparent 66%, rgba(214,212,207,0.75) 66%, rgba(214,212,207,0.75) 74%, transparent 74%),
+      linear-gradient(135deg, #cecbc6 0%, #c3c0bb 55%, #cbc8c3 100%);
   }
 
   .hero-bg-new {

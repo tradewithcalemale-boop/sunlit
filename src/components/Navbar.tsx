@@ -15,6 +15,7 @@ import { Button } from "./ui/button";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/lib/supabase";
+import TopBar from "./TopBar";
 
 const servicesItems = [
   { label: "Our Services", href: "/our-services", desc: "HR consulting, recruitment & more" },
@@ -60,6 +61,9 @@ const Navbar = () => {
 
   return (
     <Sheet>
+      {/* Top utility bar — large screens only */}
+      <TopBar />
+
       <nav className="bg-hero py-4 px-4 sticky top-0 z-50 shadow-md border-b border-white/10">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
