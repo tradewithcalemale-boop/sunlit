@@ -72,13 +72,13 @@ const Navbar = () => {
       <nav className="bg-hero py-5 lg:py-7 px-4 sticky top-0 z-50 shadow-md border-b border-white/10">
         <div className="container mx-auto flex items-center justify-between">
           {/* Logo */}
-          <a href="/" className="flex items-center gap-3 flex-shrink-0">
-            <img src="/logo.png" alt="Sunlit Centre Kenya Logo" className="h-12 lg:h-16 w-auto object-contain drop-shadow-sm" />
-            <div className="flex flex-col justify-center">
-              <span className="text-xl lg:text-2xl font-bold font-serif text-white leading-none tracking-tight">
+          <a href="/" className="flex items-center gap-2.5 min-w-0 mr-3">
+            <img src="/logo.png" alt="Sunlit Centre Kenya Logo" className="h-10 lg:h-16 w-auto object-contain drop-shadow-sm flex-shrink-0" />
+            <div className="flex flex-col justify-center min-w-0">
+              <span className="text-base sm:text-lg lg:text-2xl font-bold font-serif text-white leading-tight tracking-tight truncate">
                 Sunlit Centre Kenya
               </span>
-              <span className="text-[10px] lg:text-[11px] tracking-[0.22em] font-semibold uppercase text-cta leading-none mt-1.5">
+              <span className="text-[9px] sm:text-[10px] lg:text-[11px] tracking-[0.12em] sm:tracking-[0.2em] font-semibold uppercase text-cta leading-none mt-1 truncate">
                 Dependable, Professional Partnership
               </span>
             </div>
@@ -167,9 +167,9 @@ const Navbar = () => {
           </div>
 
           {/* Mobile hamburger */}
-          <div className="lg:hidden">
+          <div className="lg:hidden flex-shrink-0">
             <SheetTrigger asChild>
-              <Button variant="outline" size="icon" className="bg-transparent border-white/40 text-white hover:bg-white/10 hover:text-white"><Menu /></Button>
+              <Button variant="outline" size="icon" className="h-10 w-10 bg-transparent border-white/40 text-white hover:bg-white/10 hover:text-white"><Menu /></Button>
             </SheetTrigger>
           </div>
         </div>
