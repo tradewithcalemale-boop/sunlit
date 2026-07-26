@@ -95,7 +95,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
-                  Head Hunting / Talent Acquisition
+                  Talent Acquisition
                 </Link>
               </li>
               <li>

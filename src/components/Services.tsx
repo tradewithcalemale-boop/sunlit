@@ -26,7 +26,7 @@ const offerings = [
   },
   {
     icon: ContourIcon,
-    title: "Head Hunting / Talent Acquisition",
+    title: "Talent Acquisition",
     href: "/our-services#head-hunting",
     desc: "Attract and retain exceptional leadership talent for a decisive competitive advantage.",
   },
