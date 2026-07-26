@@ -95,7 +95,7 @@ const Footer = () => {
               </li>
               <li>
                 <Link to="/our-services" className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block">
-                  Head Hunting / Executive Search
+                  Head Hunting / Talent Acquisition
                 </Link>
               </li>
               <li>
@@ -134,10 +134,10 @@ const Footer = () => {
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <a
-                  href="mailto:info@sunlitcentrekenya.co.ke"
+                  href="mailto:hello@sunlitcentrekenya.co.ke"
                   className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
                 >
-                  info@sunlitcentrekenya.co.ke
+                  hello@sunlitcentrekenya.co.ke
                 </a>
               </li>
             </ul>
@@ -154,7 +154,7 @@ const Footer = () => {
                 <Twitter className="w-5 h-5" />
               </a>
               <a
-                href="https://www.linkedin.com/uas/login?session_redirect=https%3A%2F%2Fwww.linkedin.com%2FshareArticle%3Fmini%3Dtrue%26url%3Dhttps%253A%252F%252Fwww.sunlitcentrekenya.co.ke%26title%3DSunlit%2520Centre%2520Kenya"
+                href="https://www.linkedin.com/company/sunlit-centre-kenya/"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="LinkedIn"
@@ -162,9 +162,8 @@ const Footer = () => {
               >
                 <Linkedin className="w-5 h-5" />
               </a>
-              {/* Dummy links — replace with real destinations later */}
               <a
-                href="https://t.me/sunlitcentrekenya"
+                href="https://t.me/joinchat/AAAAAFB3qZoL7KVquDdEMw"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Telegram Channel"
@@ -182,7 +181,7 @@ const Footer = () => {
                 <TikTokIcon className="w-5 h-5" />
               </a>
               <a
-                href="https://wa.me/254737687881"
+                href="https://whatsapp.com/channel/0029Va1g7ScG3R3d7I2AkE0Z"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="WhatsApp"

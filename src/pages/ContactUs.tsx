@@ -70,8 +70,8 @@ const ContactUs = () => {
               </p>
               <p className="mb-4">
                 <strong>Email:</strong>{" "}
-                <a href="mailto:info@sunlitcentrekenya.co.ke" className="text-primary hover:underline">
-                  info@sunlitcentrekenya.co.ke
+                <a href="mailto:hello@sunlitcentrekenya.co.ke" className="text-primary hover:underline">
+                  hello@sunlitcentrekenya.co.ke
                 </a>
               </p>
               <p>

@@ -1,15 +1,23 @@
-import { Mail } from "lucide-react";
+import { Mail, Phone } from "lucide-react";
 
 const TopBar = () => {
   return (
     <div className="gradient-rainbow-bar py-2 px-4 relative z-[60] hidden lg:block">
-      <div className="container mx-auto flex items-center justify-end">
+      <div className="container mx-auto flex items-center justify-end gap-6">
         <a
-          href="mailto:info@sunlitcentrekenya.co.ke"
+          href="tel:+254737687881"
+          className="flex items-center gap-2 text-sm font-medium text-white hover:opacity-80 transition-opacity"
+        >
+          <Phone className="h-4 w-4" />
+          <span>0737 687 881</span>
+        </a>
+        <span className="text-white/50">|</span>
+        <a
+          href="mailto:hello@sunlitcentrekenya.co.ke"
           className="flex items-center gap-2 text-sm font-medium text-white hover:opacity-80 transition-opacity"
         >
           <Mail className="h-4 w-4" />
-          <span>info@sunlitcentrekenya.co.ke</span>
+          <span>hello@sunlitcentrekenya.co.ke</span>
         </a>
       </div>
     </div>

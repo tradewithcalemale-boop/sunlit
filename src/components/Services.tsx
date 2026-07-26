@@ -1,4 +1,5 @@
 import { Slide, JackInTheBox } from "react-awesome-reveal";
+import { Building2, BarChart2, Megaphone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import BrushIcon from "@/components/BrushIcon";
 import { ContourIcon, DotsIcon, ScribbleIcon, RingsIcon } from "@/components/ServiceIcons";
@@ -6,28 +7,46 @@ import { Link } from "react-router-dom";
 
 const offerings = [
   {
-    icon: ContourIcon,
-    title: "Executive Search",
-    href: "/our-services#head-hunting",
-    desc: "We deliver the most committed and competent leaders — helping you find, attract, motivate and retain the best people in the market.",
-  },
-  {
     icon: DotsIcon,
-    title: "HR Consulting",
+    title: "Human Resource Consulting",
     href: "/our-services#human-resource-consulting",
-    desc: "Tailored HR strategies that reduce costs and sharpen your competitive edge — from audits and policy to organizational development.",
+    desc: "Tailored HR strategies that reduce costs and sharpen your competitive edge.",
   },
   {
     icon: ScribbleIcon,
-    title: "Recruitment & Retention",
+    title: "Employee Recruitment, Selection & Retention",
     href: "/our-services#employee-recruitment",
-    desc: "An integrity-driven process that produces high-quality candidates — from a single appointment to major recruitment drives.",
+    desc: "Find and keep the best talent through a thorough, integrity-driven process.",
+  },
+  {
+    icon: Building2,
+    title: "Outsourced HR Services",
+    href: "/our-services#outsourced-hr-services",
+    desc: "Full HR management so your team can focus on your core business.",
+  },
+  {
+    icon: ContourIcon,
+    title: "Head Hunting / Talent Acquisition",
+    href: "/our-services#head-hunting",
+    desc: "Attract and retain exceptional leadership talent for a decisive competitive advantage.",
   },
   {
     icon: RingsIcon,
     title: "Training & Development",
     href: "/our-services#training-development",
-    desc: "Need-based training programmes and competency frameworks that translate directly into measurable performance gains.",
+    desc: "Need-based training programmes that translate directly into performance gains.",
+  },
+  {
+    icon: BarChart2,
+    title: "Psychometric Assessments",
+    href: "/our-services#psychometric-assessments",
+    desc: "Objective evidence of ability, potential, and culture fit beyond the interview.",
+  },
+  {
+    icon: Megaphone,
+    title: "Content Marketing",
+    href: "/our-services#content-marketing",
+    desc: "AI-powered content solutions that guide the right people to your brand.",
   },
 ];
 

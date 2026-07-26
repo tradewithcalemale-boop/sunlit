@@ -4,7 +4,7 @@
  */
 type IconProps = { className?: string; strokeWidth?: string | number };
 
-/* Executive Search — topographic / fingerprint contour lines */
+/* Talent Acquisition — topographic / fingerprint contour lines */
 export const ContourIcon = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 48 48" fill="none" stroke="currentColor"
     strokeWidth={1.5} strokeLinecap="round" aria-hidden="true">

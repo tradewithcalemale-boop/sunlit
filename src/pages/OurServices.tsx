@@ -62,7 +62,7 @@ const services = [
   {
     id: "head-hunting",
     icon: Search,
-    title: "Head Hunting / Executive Search",
+    title: "Head Hunting / Talent Acquisition",
     tagline: "Attract and retain exceptional leadership talent for a decisive competitive advantage.",
     description:
       "People are the only treasure businesses truly ride on. Businesses that recognise their human resources as valuable assets have a comprehensive competitive advantage. Top talent cannot be sourced through adverts — we step in to deliver the most committed and competent leaders, helping you find, attract, motivate, and retain the best people in the market.",
