@@ -4,7 +4,7 @@ import { supabase } from "./supabase";
 // owner controls, so password resets and magic links are actually receivable —
 // the previous admin@sunlitcentrekenya.co.ke mailbox was unreachable, which
 // left the account with no recovery path.
-const ADMIN_EMAIL = "sirhenryslime@gmail.com";
+const ADMIN_EMAIL = "sirhenryslime+admin@gmail.com";
 const RATE_KEY = "sck_admin_attempts";
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
