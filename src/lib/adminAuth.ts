@@ -1,6 +1,10 @@
 import { supabase } from "./supabase";
 
-const ADMIN_EMAIL = "admin@sunlitcentrekenya.co.ke";
+// Must match a confirmed user in Supabase Auth. Kept on an address the site
+// owner controls, so password resets and magic links are actually receivable —
+// the previous admin@sunlitcentrekenya.co.ke mailbox was unreachable, which
+// left the account with no recovery path.
+const ADMIN_EMAIL = "sirhenryslime@gmail.com";
 const RATE_KEY = "sck_admin_attempts";
 const MAX_ATTEMPTS = 5;
 const LOCKOUT_MS = 15 * 60 * 1000; // 15 minutes
