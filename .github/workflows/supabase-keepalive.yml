@@ -1,0 +1,61 @@
+name: Supabase keep-alive
+
+# Supabase free-tier projects are paused after ~7 days with no API activity.
+# This workflow makes a real query on a schedule so the project never goes idle.
+#
+# Setup (one time), in repo Settings -> Secrets and variables -> Actions:
+#   SUPABASE_URL       e.g. https://<your-ref>.supabase.co
+#   SUPABASE_ANON_KEY  the anon/publishable key
+#
+# NOTE: GitHub disables scheduled workflows after 60 days with no repository
+# activity. If this repo goes quiet that long, the schedule stops silently and
+# the project will pause. For a pinger that does not depend on repo activity,
+# point cron-job.org or UptimeRobot at the same REST URL used below.
+
+on:
+  schedule:
+    # 07:00 UTC daily — well inside the ~7 day pause window, with room for
+    # GitHub's scheduler to run late under load.
+    - cron: '0 7 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Query Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          set -euo pipefail
+
+          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
+            echo "::error::SUPABASE_URL / SUPABASE_ANON_KEY secrets are not set."
+            exit 1
+          fi
+
+          url="${SUPABASE_URL%/}/rest/v1/site_content?select=key&limit=1"
+
+          # Retry: a project resuming from cold start can take a few seconds.
+          for attempt in 1 2 3; do
+            code=$(curl -sS -o /tmp/out.txt -w '%{http_code}' \
+              -H "apikey: ${SUPABASE_ANON_KEY}" \
+              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
+              --max-time 30 "$url" || echo "000")
+
+            echo "attempt ${attempt}: HTTP ${code}"
+
+            if [ "$code" = "200" ]; then
+              echo "Keep-alive OK — project is awake."
+              head -c 200 /tmp/out.txt || true
+              exit 0
+            fi
+
+            echo "body: $(head -c 300 /tmp/out.txt 2>/dev/null || true)"
+            [ "$attempt" -lt 3 ] && sleep 15
+          done
+
+          echo "::error::Keep-alive failed (last HTTP ${code}). Project may be paused, deleted, or the key rotated."
+          exit 1
