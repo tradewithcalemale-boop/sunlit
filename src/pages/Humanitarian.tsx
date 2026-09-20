@@ -23,9 +23,9 @@ const services = [
   },
   {
     icon: Globe,
-    title: "UN & Multilateral Agency Support",
+    title: "Multilateral Agency Support",
     description:
-      "Supporting United Nations agencies and multilateral organisations in sourcing experienced candidates for critical roles.",
+      "Supporting multilateral organisations and international development agencies in sourcing experienced candidates for critical roles.",
   },
   {
     icon: Heart,
@@ -79,7 +79,7 @@ const Humanitarian = () => {
             Africa and beyond.
           </p>
           <p className="text-lg text-muted-foreground leading-relaxed">
-            From NGOs and INGOs to UN agencies and social enterprises, we partner with
+            From NGOs and INGOs to development agencies and social enterprises, we partner with
             organisations committed to making a difference — delivering the right talent at
             the right time.
           </p>

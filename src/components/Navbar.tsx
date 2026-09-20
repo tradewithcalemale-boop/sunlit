@@ -19,7 +19,7 @@ import TopBar from "./TopBar";
 
 const servicesItems = [
   { label: "What We Do", href: "/our-services", desc: "HR consulting, recruitment & more" },
-  { label: "Humanitarian", href: "/humanitarian",  desc: "NGO, INGO & UN sector staffing" },
+  { label: "Humanitarian", href: "/humanitarian",  desc: "NGO & INGO sector staffing" },
   { label: "CV Database",  href: "/cv-database",   desc: "Professional CV writing & matching" },
 ];
 
