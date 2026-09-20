@@ -3,9 +3,14 @@ name: Supabase keep-alive
 # Supabase free-tier projects are paused after ~7 days with no API activity.
 # This workflow makes a real query on a schedule so the project never goes idle.
 #
-# Setup (one time), in repo Settings -> Secrets and variables -> Actions:
+# No setup required: it falls back to the project URL and anon key that are
+# already public in src/lib/supabase.ts. To point it at a different project,
+# set these in repo Settings -> Secrets and variables -> Actions and they win:
 #   SUPABASE_URL       e.g. https://<your-ref>.supabase.co
 #   SUPABASE_ANON_KEY  the anon/publishable key
+#
+# Never put the Postgres connection string or service_role key here. A read
+# against a public table is all that is needed to count as activity.
 #
 # NOTE: GitHub disables scheduled workflows after 60 days with no repository
 # activity. If this repo goes quiet that long, the schedule stops silently and
@@ -31,19 +36,26 @@ jobs:
         run: |
           set -euo pipefail
 
-          if [ -z "${SUPABASE_URL:-}" ] || [ -z "${SUPABASE_ANON_KEY:-}" ]; then
-            echo "::error::SUPABASE_URL / SUPABASE_ANON_KEY secrets are not set."
-            exit 1
-          fi
+          # Fall back to the values already committed in src/lib/supabase.ts.
+          default_url="https://rdxxbhcfsbogaplzdspi.supabase.co"
+          default_key="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJkeHhiaGNmc2JvZ2FwbHpkc3BpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzc4NDE2MjMsImV4cCI6MjA5MzQxNzYyM30.xiTPuUSSBz2CzIBwnRgnqT98JlEDi9xEv3Tj1WybOpQ"
 
-          url="${SUPABASE_URL%/}/rest/v1/site_content?select=key&limit=1"
+          url_base="${SUPABASE_URL:-$default_url}"
+          key="${SUPABASE_ANON_KEY:-$default_key}"
+
+          url="${url_base%/}/rest/v1/site_content?select=key&limit=1"
+          echo "Pinging ${url_base}"
 
           # Retry: a project resuming from cold start can take a few seconds.
           for attempt in 1 2 3; do
+            # Truncate first: curl leaves the previous attempt's body in place
+            # if the connection fails, which makes the log lie.
+            : > /tmp/out.txt
             code=$(curl -sS -o /tmp/out.txt -w '%{http_code}' \
-              -H "apikey: ${SUPABASE_ANON_KEY}" \
-              -H "Authorization: Bearer ${SUPABASE_ANON_KEY}" \
-              --max-time 30 "$url" || echo "000")
+              -H "apikey: ${key}" \
+              -H "Authorization: Bearer ${key}" \
+              --max-time 30 "$url" || true)
+            code="${code:-000}"
 
             echo "attempt ${attempt}: HTTP ${code}"
 
