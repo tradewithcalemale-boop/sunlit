@@ -129,15 +129,15 @@ const Footer = () => {
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 flex-shrink-0" />
-                <span>+(254) 0737 687 881</span>
+                <span>+254 737 687 881</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 flex-shrink-0" />
                 <a
-                  href="mailto:hello@sunlitcentrekenya.co.ke"
+                  href="mailto:info@sunlitcentrekenya.co.ke"
                   className="transition-all duration-300 hover:text-cyan-accent hover:translate-x-1 inline-block"
                 >
-                  hello@sunlitcentrekenya.co.ke
+                  info@sunlitcentrekenya.co.ke
                 </a>
               </li>
             </ul>

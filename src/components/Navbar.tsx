@@ -325,13 +325,13 @@ const Navbar = () => {
           )}
 
           <div className="space-y-2 pt-1">
-            <a href="mailto:hello@sunlitcentrekenya.co.ke" className="flex items-center gap-2.5 text-xs text-white/70 hover:text-cyan-accent transition-colors">
+            <a href="mailto:info@sunlitcentrekenya.co.ke" className="flex items-center gap-2.5 text-xs text-white/70 hover:text-cyan-accent transition-colors">
               <Mail className="w-3.5 h-3.5 flex-shrink-0" />
-              <span className="truncate">hello@sunlitcentrekenya.co.ke</span>
+              <span className="truncate">info@sunlitcentrekenya.co.ke</span>
             </a>
             <a href="tel:+254737687881" className="flex items-center gap-2.5 text-xs text-white/70 hover:text-cyan-accent transition-colors">
               <Phone className="w-3.5 h-3.5 flex-shrink-0" />
-              <span>+(254) 0737 687 881</span>
+              <span>+254 737 687 881</span>
             </a>
           </div>
         </div>

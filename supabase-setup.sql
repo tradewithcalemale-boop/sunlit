@@ -81,7 +81,7 @@ INSERT INTO site_content (key, value, label, page, content_type) VALUES
   ('home_stats_active', '500+',    'Active Listings Stat', 'home',   'text'),
   ('home_stats_placed', '10,000+', 'Placements Stat',      'home',   'text'),
   ('footer_address',    'Blue Violets Plaza, 2nd Floor, Kamburu Drive, Off Ngong Road, Kilimani.', 'Footer Address', 'global', 'text'),
-  ('footer_phone',      '+(254) 0737 687 881',           'Footer Phone', 'global', 'text'),
+  ('footer_phone',      '+254 737 687 881',           'Footer Phone', 'global', 'text'),
   ('footer_email',      'info@sunlitcentrekenya.co.ke',  'Footer Email', 'global', 'url')
 ON CONFLICT (key) DO NOTHING;
 

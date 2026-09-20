@@ -9,15 +9,15 @@ const TopBar = () => {
           className="flex items-center gap-2 text-sm font-medium text-white hover:opacity-80 transition-opacity"
         >
           <Phone className="h-4 w-4" />
-          <span>0737 687 881</span>
+          <span>+254 737 687 881</span>
         </a>
         <span className="text-white/50">|</span>
         <a
-          href="mailto:hello@sunlitcentrekenya.co.ke"
+          href="mailto:info@sunlitcentrekenya.co.ke"
           className="flex items-center gap-2 text-sm font-medium text-white hover:opacity-80 transition-opacity"
         >
           <Mail className="h-4 w-4" />
-          <span>hello@sunlitcentrekenya.co.ke</span>
+          <span>info@sunlitcentrekenya.co.ke</span>
         </a>
       </div>
     </div>
