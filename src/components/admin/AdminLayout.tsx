@@ -56,7 +56,7 @@ const AdminLayout = ({ children, title }: { children: React.ReactNode; title: st
       {/* Logo */}
       <div className="p-5 border-b border-primary-foreground/15">
         <Link to="/" className="flex items-center gap-2">
-          <img src="https://i.ibb.co/tTfFThfq/image.png" alt="logo" className="h-8 brightness-200" />
+          <img src="/logo.png" alt="Sunlit Centre Kenya" className="h-9 w-auto object-contain flex-shrink-0" />
           <div>
             <p className="text-sm font-bold leading-tight">Sunlit Centre</p>
             <p className="text-[10px] text-primary-foreground/60 leading-tight">Admin Console</p>
