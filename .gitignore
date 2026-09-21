@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# cPanel upload package (built from dist/)
+sunlit-cpanel-upload.zip
