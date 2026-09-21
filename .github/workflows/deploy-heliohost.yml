@@ -1,0 +1,64 @@
+name: Deploy to HelioHost
+
+# Builds the site and uploads dist/ to sunlitcentrekenya.co.ke over FTP on
+# every push to main, so the live site updates automatically.
+#
+# Needs these Actions secrets (Settings -> Secrets and variables -> Actions):
+#   FTP_SERVER    FTP host from HelioHost's "FTP Accounts" page (no ftp://)
+#   FTP_USERNAME  full FTP username as HelioHost shows it
+#   FTP_PASSWORD  that account's password
+# The FTP account's directory must be the website folder, because files are
+# uploaded to the folder the account opens in.
+#
+# Only changed files are uploaded (a small .ftp-deploy-sync-state.json on the
+# server tracks this). Files that aren't part of the build, such as the Google
+# verification files, .well-known and cgi-bin, are never touched.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Never run two uploads at once.
+concurrency:
+  group: deploy-heliohost
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Check build output
+        run: |
+          for f in index.html .htaccess ads.txt; do
+            test -f "dist/$f" || { echo "::error::dist/$f missing, refusing to deploy"; exit 1; }
+          done
+
+      - name: Upload to HelioHost
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # Encrypted FTP. If the first run fails with a TLS/SSL error, the
+          # host doesn't support it; change this to: ftp
+          protocol: ftps
+          local-dir: ./dist/
+          server-dir: ./

@@ -1,5 +1,8 @@
 # Apache config for cPanel hosting (Vercel uses vercel.json instead).
 
+# Serve the app's index.html, even if an old index.php is still on the server.
+DirectoryIndex index.html
+
 # No directory listings.
 Options -Indexes
 
