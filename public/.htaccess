@@ -40,9 +40,11 @@ Options -Indexes
   Header always unset X-Powered-By
   Header unset X-Powered-By
 
-  # Keep the admin area out of search engines.
-  SetEnvIf Request_URI "^/ssuunnlliitt" SUNLIT_ADMIN
-  Header always set X-Robots-Tag "noindex, nofollow" env=SUNLIT_ADMIN
+  # Keep the admin area out of search engines. Matched on the original request
+  # line, because the SPA rewrite to index.html renames per-request env vars.
+  <If "%{THE_REQUEST} =~ m#^\S+\s+/ssuunnlliitt#">
+    Header always set X-Robots-Tag "noindex, nofollow"
+  </If>
 
   # Built assets have content hashes in their names, so cache them hard.
   <FilesMatch "\.(js|css|woff2?|jpg|jpeg|png|svg|webp|ico)$">
