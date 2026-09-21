@@ -24,6 +24,8 @@ export type Job = {
   requirements?: string;
   salary_range?: string;
   apply_url?: string;
+  how_to_apply?: string;
+  deadline?: string; // YYYY-MM-DD
   contact_name?: string;
   contact_email?: string;
   contact_phone?: string;
@@ -31,6 +33,16 @@ export type Job = {
   created_at: string;
   updated_at: string;
 };
+
+// What the public job board gets (the jobs_public view): no employer contact
+// details, no status. Apply details come separately from jobs_apply_info, and
+// only for signed-in users.
+export type PublicJob = Pick<
+  Job,
+  | "id" | "title" | "company" | "company_logo" | "location" | "type" | "category"
+  | "description" | "requirements" | "salary_range" | "deadline" | "created_at"
+>;
+export type JobApplyInfo = Pick<Job, "id" | "apply_url" | "how_to_apply">;
 
 export type Advertisement = {
   id: string;

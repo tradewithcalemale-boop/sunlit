@@ -1,14 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { supabase, Job } from "@/lib/supabase";
+import { supabase, PublicJob, JobApplyInfo } from "@/lib/supabase";
 import { safeImage, safeLink } from "@/lib/safeUrl";
+import { useAuth } from "@/hooks/useAuth";
+import LinkifiedText from "@/components/LinkifiedText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import {
   MapPin, Clock, Briefcase, Search, Building2, ChevronRight,
-  Bookmark, SlidersHorizontal, X, ExternalLink,
+  Bookmark, SlidersHorizontal, X, ExternalLink, CalendarClock, LogIn,
 } from "lucide-react";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship", "Remote"];
@@ -32,8 +34,17 @@ const timeSince = (date: string) => {
   return `${days}d ago`;
 };
 
+// Deadlines are plain dates (YYYY-MM-DD); read them as local midnight.
+const formatDeadline = (d: string) =>
+  new Date(`${d}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
+const daysLeft = (d: string) =>
+  Math.round((new Date(`${d}T00:00:00`).getTime() - new Date(new Date().toDateString()).getTime()) / 86400000);
+
 const ViewJobs = () => {
-  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const { isAuthenticated, loading: authLoading } = useAuth();
+  const [allJobs, setAllJobs] = useState<PublicJob[]>([]);
+  const [applyInfo, setApplyInfo] = useState<Record<string, JobApplyInfo>>({});
+  const [openApply, setOpenApply] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
@@ -42,17 +53,32 @@ const ViewJobs = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
 
+  // Anyone can browse. The view has no employer contact details and only
+  // lists approved jobs whose deadline hasn't passed.
   useEffect(() => {
     supabase
-      .from("jobs")
+      .from("jobs_public")
       .select("*")
-      .eq("status", "approved")
       .order("created_at", { ascending: false })
       .then(({ data }) => {
-        setAllJobs(data || []);
+        setAllJobs((data as PublicJob[]) || []);
         setLoading(false);
       });
   }, []);
+
+  // How to apply is only served to signed-in users (the database refuses it
+  // to visitors), so applying requires an account.
+  useEffect(() => {
+    if (!isAuthenticated) { setApplyInfo({}); return; }
+    supabase
+      .from("jobs_apply_info")
+      .select("*")
+      .then(({ data }) => {
+        const byId: Record<string, JobApplyInfo> = {};
+        ((data as JobApplyInfo[]) || []).forEach((a) => { byId[a.id] = a; });
+        setApplyInfo(byId);
+      });
+  }, [isAuthenticated]);
 
   const filtered = useMemo(() => {
     return allJobs.filter((j) => {
@@ -310,24 +336,59 @@ const ViewJobs = () => {
                           </span>
                         </div>
 
-                        {/* Apply button */}
+                        {job.deadline && (
+                          <p className={`flex items-center gap-1.5 text-xs mt-3 font-medium ${daysLeft(job.deadline) <= 3 ? "text-destructive" : "text-muted-foreground"}`}>
+                            <CalendarClock className="w-3.5 h-3.5" />
+                            Apply by {formatDeadline(job.deadline)}
+                            {daysLeft(job.deadline) === 0 ? " (closes today)" : daysLeft(job.deadline) <= 3 ? ` (${daysLeft(job.deadline)} day${daysLeft(job.deadline) !== 1 ? "s" : ""} left)` : ""}
+                          </p>
+                        )}
+
+                        {/* Apply */}
                         <div className="mt-4">
-                          {safeLink(job.apply_url) ? (
-                            <a
-                              href={safeLink(job.apply_url)}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                          {authLoading ? null : !isAuthenticated ? (
+                            <Link
+                              to="/login-register?returnUrl=/view-jobs"
                               className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
                             >
-                              Apply Now <ExternalLink className="w-3.5 h-3.5" />
-                            </a>
+                              <LogIn className="w-3.5 h-3.5" /> Sign in to Apply
+                            </Link>
                           ) : (
-                            <a
-                              href={`/contact-us`}
-                              className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
-                            >
-                              Apply via Contact <ChevronRight className="w-3.5 h-3.5" />
-                            </a>
+                            <>
+                              <button
+                                onClick={() => setOpenApply(openApply === job.id ? null : job.id)}
+                                className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                              >
+                                How to Apply <ChevronRight className={`w-3.5 h-3.5 transition-transform ${openApply === job.id ? "rotate-90" : ""}`} />
+                              </button>
+                              {openApply === job.id && (() => {
+                                const info = applyInfo[job.id];
+                                const link = safeLink(info?.apply_url);
+                                return (
+                                  <div className="mt-3 rounded-xl border border-border bg-secondary/40 p-4 space-y-3">
+                                    {info?.how_to_apply ? (
+                                      <LinkifiedText text={info.how_to_apply} className="text-sm text-foreground" />
+                                    ) : !link ? (
+                                      <p className="text-sm text-muted-foreground">Contact us to apply for this role.</p>
+                                    ) : null}
+                                    {link ? (
+                                      <a
+                                        href={link}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
+                                      >
+                                        Apply Now <ExternalLink className="w-3.5 h-3.5" />
+                                      </a>
+                                    ) : !info?.how_to_apply ? (
+                                      <Link to="/contact-us" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+                                        Contact us <ChevronRight className="w-3.5 h-3.5" />
+                                      </Link>
+                                    ) : null}
+                                  </div>
+                                );
+                              })()}
+                            </>
                           )}
                         </div>
                       </div>

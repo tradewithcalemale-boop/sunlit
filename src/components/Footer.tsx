@@ -124,7 +124,7 @@ const Footer = () => {
                 <MapPin className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <span>
                   Blue Violets Plaza, 2nd Floor, Kamburu Drive, Off Ngong Road,
-                  Kilimani.
+                  Kilimani, Nairobi, Kenya.
                 </span>
               </li>
               <li className="flex items-center gap-2">

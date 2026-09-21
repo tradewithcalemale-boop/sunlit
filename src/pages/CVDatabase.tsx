@@ -71,8 +71,8 @@ const CVDatabase = () => {
           </h3>
           <p>
             Email your CV (Ms Word) to{' '}
-            <a href="mailto:info@sunlitcentrekenya.co.ke">
-              info@sunlitcentrekenya.co.ke
+            <a href="mailto:hello@sunlitcentrekenya.co.ke">
+              hello@sunlitcentrekenya.co.ke
             </a>{' '}
             with subject line CV Writing
           </p>

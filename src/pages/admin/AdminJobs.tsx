@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase, Job } from "@/lib/supabase";
+import LinkifiedText from "@/components/LinkifiedText";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,7 @@ const emptyJob: Partial<Job> = {
   title: "", company: "", location: "", type: "Full-time",
   category: "", description: "", requirements: "", salary_range: "",
   apply_url: "", contact_name: "", contact_email: "", contact_phone: "",
+  how_to_apply: "", deadline: "",
 };
 
 const AdminJobs = () => {
@@ -33,6 +35,7 @@ const AdminJobs = () => {
   const [viewJob, setViewJob] = useState<Job | null>(null);
   const [editJob, setEditJob] = useState<Partial<Job> | null>(null);
   const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState("");
 
   const load = async () => {
     setLoading(true);
@@ -64,16 +67,31 @@ const AdminJobs = () => {
 
   const saveJob = async () => {
     if (!editJob) return;
+    if (!editJob.id && !editJob.deadline) {
+      setSaveError("Please set an application deadline.");
+      return;
+    }
     setSaving(true);
+    setSaveError("");
+    // An empty date field must be sent as null, not "".
+    const record = { ...editJob, deadline: editJob.deadline || null };
+    let error;
     if (editJob.id) {
-      const { data } = await supabase.from("jobs").update(editJob).eq("id", editJob.id).select().single();
-      if (data) setJobs((prev) => prev.map((j) => (j.id === data.id ? data : j)));
+      const res = await supabase.from("jobs").update(record).eq("id", editJob.id).select().single();
+      error = res.error;
+      if (res.data) setJobs((prev) => prev.map((j) => (j.id === res.data.id ? res.data : j)));
     } else {
-      const payload = { ...editJob, status: "pending" as const };
-      const { data } = await supabase.from("jobs").insert(payload).select().single();
-      if (data) setJobs((prev) => [data, ...prev]);
+      // Keep the status the admin picked (it used to be forced to "pending").
+      const payload = { ...record, status: editJob.status || "pending" };
+      const res = await supabase.from("jobs").insert(payload).select().single();
+      error = res.error;
+      if (res.data) setJobs((prev) => [res.data, ...prev]);
     }
     setSaving(false);
+    if (error) {
+      setSaveError(error.message);
+      return;
+    }
     setEditJob(null);
   };
 
@@ -202,6 +220,7 @@ const AdminJobs = () => {
                   ["Salary", viewJob.salary_range || "—"], ["Apply URL", viewJob.apply_url || "—"],
                   ["Contact", viewJob.contact_name || "—"], ["Email", viewJob.contact_email || "—"],
                   ["Phone", viewJob.contact_phone || "—"], ["Status", viewJob.status],
+                  ["Deadline", viewJob.deadline || "—"],
                 ].map(([l, v]) => (
                   <div key={l}>
                     <p className="text-xs text-muted-foreground font-medium">{l}</p>
@@ -217,6 +236,12 @@ const AdminJobs = () => {
                 <div>
                   <p className="text-xs text-muted-foreground font-medium mb-1">Requirements</p>
                   <p className="text-foreground whitespace-pre-wrap">{viewJob.requirements}</p>
+                </div>
+              )}
+              {viewJob.how_to_apply && (
+                <div>
+                  <p className="text-xs text-muted-foreground font-medium mb-1">How to Apply</p>
+                  <LinkifiedText text={viewJob.how_to_apply} className="text-foreground" />
                 </div>
               )}
               {viewJob.status === "pending" && (
@@ -235,7 +260,7 @@ const AdminJobs = () => {
       </Dialog>
 
       {/* Edit/Add modal */}
-      <Dialog open={!!editJob} onOpenChange={() => setEditJob(null)}>
+      <Dialog open={!!editJob} onOpenChange={() => { setEditJob(null); setSaveError(""); }}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>{editJob?.id ? "Edit Job" : "Add New Job"}</DialogTitle>
@@ -279,6 +304,14 @@ const AdminJobs = () => {
                     {["pending","approved","rejected"].map((s) => <option key={s}>{s}</option>)}
                   </select>
                 </div>
+                <div>
+                  <label className="block text-xs font-medium mb-1">Application Deadline <span className="text-destructive">*</span></label>
+                  <Input
+                    type="date"
+                    value={editJob.deadline || ""}
+                    onChange={(e) => setEditJob({ ...editJob, deadline: e.target.value })}
+                  />
+                </div>
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">Description</label>
@@ -288,6 +321,13 @@ const AdminJobs = () => {
                 <label className="block text-xs font-medium mb-1">Requirements</label>
                 <Textarea rows={4} value={editJob.requirements || ""} onChange={(e) => setEditJob({ ...editJob, requirements: e.target.value })} />
               </div>
+              <div>
+                <label className="block text-xs font-medium mb-1">How to Apply <span className="text-muted-foreground font-normal">(links and emails become clickable)</span></label>
+                <Textarea rows={4} maxLength={5000} value={editJob.how_to_apply || ""} onChange={(e) => setEditJob({ ...editJob, how_to_apply: e.target.value })} />
+              </div>
+              {saveError && (
+                <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{saveError}</p>
+              )}
               <div className="flex gap-2 justify-end pt-2">
                 <Button variant="outline" onClick={() => setEditJob(null)}>Cancel</Button>
                 <Button onClick={saveJob} disabled={saving} className="bg-primary text-white hover:bg-primary/90">

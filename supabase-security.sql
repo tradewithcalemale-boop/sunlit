@@ -10,6 +10,9 @@
 --   3. Rejects dangerous links (javascript: etc.) and oversized input
 --   4. Locks the media bucket to the admin, fixes the admin media listing,
 --      and restricts upload types and size
+--   5. Keeps employers' contact details private: the public job board reads
+--      from a view without them, and application details (how to apply,
+--      apply link) are only served to signed-in users
 --
 -- The admin is identified by user ID, not email. If you ever change the admin
 -- account, update the UUID in public.is_admin() below AND ADMIN_EMAIL in
@@ -24,6 +27,10 @@ SET search_path = ''
 AS $$
   SELECT COALESCE(auth.uid() = 'eec43e0c-d42e-4bcb-b3ad-70d7dcede0b9'::uuid, false);
 $$;
+
+-- 1b. Job fields ---------------------------------------------------------------
+ALTER TABLE public.jobs ADD COLUMN IF NOT EXISTS how_to_apply text;
+ALTER TABLE public.jobs ADD COLUMN IF NOT EXISTS deadline date;
 
 -- 2. Remove every existing policy on the app tables --------------------------
 -- Dropped dynamically so policies added by hand in the dashboard are caught too.
@@ -45,9 +52,9 @@ ALTER TABLE public.contact_submissions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.site_content        ENABLE ROW LEVEL SECURITY;
 
 -- 3. Row-level security policies ---------------------------------------------
--- Jobs: public sees approved jobs and may submit pending ones; admin does all.
-CREATE POLICY jobs_public_read   ON public.jobs FOR SELECT TO anon, authenticated
-  USING (status = 'approved');
+-- Jobs: public may submit pending jobs; admin does all. There is deliberately
+-- NO public read policy on the table: it holds employers' contact details.
+-- The job board reads the jobs_public / jobs_apply_info views (section 7).
 CREATE POLICY jobs_public_submit ON public.jobs FOR INSERT TO anon, authenticated
   WITH CHECK (status = 'pending');
 CREATE POLICY jobs_admin_all     ON public.jobs FOR ALL TO authenticated
@@ -80,6 +87,13 @@ SET search_path = ''
 AS $$
 DECLARE recent int;
 BEGIN
+  -- Application deadline is mandatory for every new job, admin included.
+  -- (Enforced on insert only, so existing jobs without one can still be
+  -- approved or edited.)
+  IF TG_TABLE_NAME = 'jobs' AND NEW.deadline IS NULL THEN
+    RAISE EXCEPTION 'An application deadline is required.' USING ERRCODE = 'P0001';
+  END IF;
+
   IF public.is_admin() THEN
     RETURN NEW;
   END IF;
@@ -88,6 +102,10 @@ BEGIN
 
   IF TG_TABLE_NAME = 'jobs' THEN
     NEW.status := 'pending';
+    IF NEW.deadline < current_date THEN
+      RAISE EXCEPTION 'Please choose an application deadline that is today or later.'
+        USING ERRCODE = 'P0001';
+    END IF;
     SELECT count(*) INTO recent FROM public.jobs
       WHERE created_at > now() - interval '1 minute';
   ELSE
@@ -133,6 +151,13 @@ ALTER TABLE public.jobs ADD CONSTRAINT jobs_safe_input CHECK (
   AND (coalesce(company_logo, '') = '' OR company_logo ~* '^https?://')
 ) NOT VALID;
 
+-- (Deadline is required by the insert trigger above, not a CHECK: a CHECK
+-- would also block approving existing jobs that predate the field.)
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_deadline_required;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_how_to_apply_len;
+ALTER TABLE public.jobs ADD CONSTRAINT jobs_how_to_apply_len
+  CHECK (char_length(coalesce(how_to_apply, '')) <= 5000) NOT VALID;
+
 ALTER TABLE public.contact_submissions DROP CONSTRAINT IF EXISTS contact_safe_input;
 ALTER TABLE public.contact_submissions ADD CONSTRAINT contact_safe_input CHECK (
       char_length(name) BETWEEN 1 AND 200
@@ -176,7 +201,30 @@ SET file_size_limit    = 52428800,
                                'video/mp4','video/webm','application/pdf']
 WHERE id = 'media';
 
--- 7. Check the result -----------------------------------------------------------
+-- 7. Job board views -------------------------------------------------------------
+-- Views run with the owner's rights, so they return exactly these columns and
+-- rows regardless of table RLS. Approved jobs whose deadline hasn't passed.
+-- No contact_name / contact_email / contact_phone anywhere public.
+CREATE OR REPLACE VIEW public.jobs_public AS
+SELECT id, title, company, company_logo, location, type, category,
+       description, requirements, salary_range, deadline, created_at
+FROM public.jobs
+WHERE status = 'approved' AND (deadline IS NULL OR deadline >= current_date);
+
+-- How to apply: signed-in users only, so visitors must register to apply.
+CREATE OR REPLACE VIEW public.jobs_apply_info AS
+SELECT id, apply_url, how_to_apply
+FROM public.jobs
+WHERE status = 'approved' AND (deadline IS NULL OR deadline >= current_date);
+
+REVOKE ALL ON public.jobs_public     FROM PUBLIC, anon, authenticated;
+REVOKE ALL ON public.jobs_apply_info FROM PUBLIC, anon, authenticated;
+GRANT SELECT ON public.jobs_public     TO anon, authenticated;
+GRANT SELECT ON public.jobs_apply_info TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+-- 8. Check the result -----------------------------------------------------------
 SELECT tablename, policyname, cmd, roles
 FROM pg_policies
 WHERE (schemaname = 'public' AND tablename IN ('jobs','advertisements','contact_submissions','site_content'))

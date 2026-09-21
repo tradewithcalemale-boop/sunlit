@@ -29,15 +29,10 @@ function App() {
         <Route path="/humanitarian" element={<Humanitarian />} />
         <Route path="/login-register" element={<LoginRegister />} />
 
+        {/* Anyone can browse jobs; applying needs an account (handled in-page). */}
+        <Route path="/view-jobs" element={<ViewJobs />} />
+
         {/* ── Protected routes (login required) ─────────── */}
-        <Route
-          path="/view-jobs"
-          element={
-            <ProtectedRoute>
-              <ViewJobs />
-            </ProtectedRoute>
-          }
-        />
         <Route
           path="/submit-job"
           element={

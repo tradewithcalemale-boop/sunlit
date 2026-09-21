@@ -6,13 +6,17 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Briefcase, Building2, MapPin, DollarSign, CheckCircle } from "lucide-react";
+import { Briefcase, Building2, MapPin, DollarSign, CheckCircle, CalendarClock, Lock } from "lucide-react";
+
+// YYYY-MM-DD in the visitor's own timezone, for the date picker's minimum.
+const todayISO = () => new Date().toLocaleDateString("en-CA");
 
 const SubmitJob = () => {
   const [form, setForm] = useState({
     company: "", contact_name: "", contact_email: "", contact_phone: "",
     title: "", type: "Full-time", location: "", salary_range: "",
     description: "", requirements: "", apply_url: "", category: "",
+    how_to_apply: "", deadline: "",
   });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -41,6 +45,8 @@ const SubmitJob = () => {
       setError(
         err.message.includes("Too many")
           ? "We're receiving a lot of submissions right now. Please try again in a minute."
+          : err.message.toLowerCase().includes("deadline")
+          ? "Please choose an application deadline that is today or later."
           : "Something went wrong. Please check your details and try again."
       );
     } else {
@@ -65,7 +71,7 @@ const SubmitJob = () => {
             <p className="text-sm text-muted-foreground mb-8">
               You'll hear from us at <strong>{form.contact_email}</strong>.
             </p>
-            <Button variant="cta" onClick={() => { setSubmitted(false); setForm({ company: "", contact_name: "", contact_email: "", contact_phone: "", title: "", type: "Full-time", location: "", salary_range: "", description: "", requirements: "", apply_url: "", category: "" }); }}>
+            <Button variant="cta" onClick={() => { setSubmitted(false); setForm({ company: "", contact_name: "", contact_email: "", contact_phone: "", title: "", type: "Full-time", location: "", salary_range: "", description: "", requirements: "", apply_url: "", category: "", how_to_apply: "", deadline: "" }); }}>
               Submit Another Job
             </Button>
           </div>
@@ -94,6 +100,10 @@ const SubmitJob = () => {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-6">
+            <p className="flex items-start gap-2 text-xs text-muted-foreground bg-secondary/60 rounded-lg px-3 py-2">
+              <Lock className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+              Your contact person, phone number and email are only seen by our team. They are never shown on the job board.
+            </p>
             <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium mb-1">Company Name <span className="text-destructive">*</span></label>
@@ -161,9 +171,30 @@ const SubmitJob = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium mb-1">Application / Company URL</label>
-              <Input placeholder="https://yourcompany.com/careers (where candidates apply)" value={form.apply_url} onChange={set("apply_url")} />
-              <p className="text-xs text-muted-foreground mt-1">Candidates will be redirected here to apply. Can be a website, LinkedIn post, or email link.</p>
+              <label className="block text-sm font-medium mb-1">Application Deadline <span className="text-destructive">*</span></label>
+              <div className="relative md:w-1/2">
+                <CalendarClock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                <Input className="pl-9" type="date" required min={todayISO()} value={form.deadline} onChange={set("deadline")} />
+              </div>
+              <p className="text-xs text-muted-foreground mt-1">The listing is removed from the job board after this date.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">How to Apply</label>
+              <Textarea
+                rows={4}
+                maxLength={5000}
+                placeholder={"Explain the application process, e.g.\nSend your CV and cover letter to careers@company.com with the job title as the subject.\nOr apply online: https://company.com/careers/12345"}
+                value={form.how_to_apply}
+                onChange={set("how_to_apply")}
+              />
+              <p className="text-xs text-muted-foreground mt-1">You can include links and email addresses; they become clickable for candidates.</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium mb-1">Application Link <span className="text-muted-foreground font-normal">(optional)</span></label>
+              <Input placeholder="https://yourcompany.com/careers" value={form.apply_url} onChange={set("apply_url")} />
+              <p className="text-xs text-muted-foreground mt-1">Shown as an "Apply Now" button. Can be a website, LinkedIn post, or email address.</p>
             </div>
 
             <div>
