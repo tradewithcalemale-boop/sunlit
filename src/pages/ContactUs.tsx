@@ -68,7 +68,7 @@ const ContactUs = () => {
             <div>
               <h2 className="text-2xl font-bold mb-4">Get in Touch</h2>
               <p className="mb-4 text-muted-foreground">
-                Blue Violets Plaza, Off Kindaruma Road, Ngong Road
+                Blue Violets Plaza, 2nd Floor, Kamburu Drive, Off Ngong Road, Kilimani, Nairobi, Kenya.
                 <br />
                 P O Box 56858-00200 Nairobi
               </p>
