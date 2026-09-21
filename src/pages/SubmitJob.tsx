@@ -25,13 +25,24 @@ const SubmitJob = () => {
     e.preventDefault();
     setLoading(true);
     setError("");
+    // The database only accepts http(s) and mailto links, so fix up the
+    // common "www.company.com" or bare-email entries instead of rejecting them.
+    let applyUrl = form.apply_url.trim();
+    if (applyUrl && !/^(https?:\/\/|mailto:)/i.test(applyUrl)) {
+      applyUrl = applyUrl.includes("@") && !applyUrl.includes("/") ? `mailto:${applyUrl}` : `https://${applyUrl}`;
+    }
     const { error: err } = await supabase.from("jobs").insert({
       ...form,
+      apply_url: applyUrl,
       status: "pending",
     });
     setLoading(false);
     if (err) {
-      setError("Something went wrong. Please try again.");
+      setError(
+        err.message.includes("Too many")
+          ? "We're receiving a lot of submissions right now. Please try again in a minute."
+          : "Something went wrong. Please check your details and try again."
+      );
     } else {
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });

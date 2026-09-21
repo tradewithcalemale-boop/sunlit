@@ -29,7 +29,11 @@ const ContactUs = () => {
     });
     setLoading(false);
     if (err) {
-      setError("Something went wrong. Please try again.");
+      setError(
+        err.message.includes("Too many")
+          ? "We're receiving a lot of messages right now. Please try again in a minute."
+          : "Something went wrong. Please check your details and try again."
+      );
     } else {
       setSubmitted(true);
     }
@@ -84,15 +88,15 @@ const ContactUs = () => {
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium mb-1">Name</label>
-                  <Input id="name" type="text" required value={form.name} onChange={set("name")} />
+                  <Input id="name" type="text" required maxLength={200} value={form.name} onChange={set("name")} />
                 </div>
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium mb-1">Email</label>
-                  <Input id="email" type="email" required value={form.email} onChange={set("email")} />
+                  <Input id="email" type="email" required maxLength={320} value={form.email} onChange={set("email")} />
                 </div>
                 <div>
                   <label htmlFor="message" className="block text-sm font-medium mb-1">Message</label>
-                  <Textarea id="message" rows={5} required value={form.message} onChange={set("message")} />
+                  <Textarea id="message" rows={5} required maxLength={5000} value={form.message} onChange={set("message")} />
                 </div>
                 {error && (
                   <div className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</div>

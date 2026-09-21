@@ -20,7 +20,13 @@ const passwordStrength = (pwd: string) => {
 const LoginRegister = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const returnUrl = searchParams.get("returnUrl") || "/view-jobs";
+  // Only follow same-site paths, so a crafted ?returnUrl= link can't bounce a
+  // freshly signed-in user somewhere else.
+  const rawReturn = searchParams.get("returnUrl") || "";
+  const returnUrl =
+    rawReturn.startsWith("/") && !rawReturn.startsWith("//") && !rawReturn.includes("\\")
+      ? rawReturn
+      : "/view-jobs";
 
   const [view, setView] = useState<View>("login");
 

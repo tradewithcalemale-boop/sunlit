@@ -1,5 +1,8 @@
 # Apache config for cPanel hosting (Vercel uses vercel.json instead).
 
+# No directory listings.
+Options -Indexes
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -8,10 +11,13 @@
   RewriteCond %{HTTPS} off
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
+  # Block hidden files (.env, .git, etc.) but keep .well-known for SSL renewal.
+  RewriteRule (^|/)\.(?!well-known/) - [F,L]
+
   # Single-page app: serve real files and folders as-is (assets, ads.txt,
-  # logo.png, .well-known for SSL renewal), send every other path to
-  # index.html so React Router can resolve it. Without this, direct loads
-  # of /contact-us, /ssuunnlliitt etc. would 404.
+  # logo.png, .well-known), send every other path to index.html so React
+  # Router can resolve it. Without this, direct loads of /contact-us,
+  # /ssuunnlliitt etc. would 404.
   RewriteRule ^index\.html$ - [L]
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
@@ -19,6 +25,22 @@
 </IfModule>
 
 <IfModule mod_headers.c>
+  # Security headers. Scripts are not restricted by CSP because Google AdSense
+  # loads from many Google domains; the policy below covers framing, plugins,
+  # base-tag and form hijacking instead.
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+  Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests"
+  Header always set Strict-Transport-Security "max-age=31536000" env=HTTPS
+  Header always unset X-Powered-By
+  Header unset X-Powered-By
+
+  # Keep the admin area out of search engines.
+  SetEnvIf Request_URI "^/ssuunnlliitt" SUNLIT_ADMIN
+  Header always set X-Robots-Tag "noindex, nofollow" env=SUNLIT_ADMIN
+
   # Built assets have content hashes in their names, so cache them hard.
   <FilesMatch "\.(js|css|woff2?|jpg|jpeg|png|svg|webp|ico)$">
     Header set Cache-Control "public, max-age=31536000, immutable"

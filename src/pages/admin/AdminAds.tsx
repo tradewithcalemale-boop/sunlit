@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Plus, Pencil, Trash2, ExternalLink, ImageIcon, Megaphone } from "lucide-react";
+import { safeImage, safeLink } from "@/lib/safeUrl";
 
 const emptyAd: Partial<Advertisement> = {
   title: "", description: "", image_url: "", link_url: "",
@@ -97,8 +98,8 @@ const AdminAds = () => {
         <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4">
           {ads.map((ad) => (
             <div key={ad.id} className="bg-white rounded-xl border border-border overflow-hidden hover:shadow-md transition-shadow">
-              {ad.image_url ? (
-                <img src={ad.image_url} alt={ad.title} className="w-full h-40 object-cover" />
+              {safeImage(ad.image_url) ? (
+                <img src={safeImage(ad.image_url)} alt={ad.title} className="w-full h-40 object-cover" />
               ) : (
                 <div className="w-full h-40 bg-gray-100 flex items-center justify-center">
                   <ImageIcon className="w-8 h-8 text-gray-300" />
@@ -121,7 +122,7 @@ const AdminAds = () => {
                   <p className="text-xs text-muted-foreground mb-3 line-clamp-2">{ad.description}</p>
                 )}
                 <div className="flex items-center gap-2">
-                  <a href={ad.link_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
+                  <a href={safeLink(ad.link_url)} target="_blank" rel="noopener noreferrer" className="text-xs text-primary hover:underline flex items-center gap-1">
                     <ExternalLink className="w-3 h-3" /> Visit
                   </a>
                   <button onClick={() => setEditAd(ad)} className="ml-auto p-1.5 hover:bg-gray-100 rounded text-muted-foreground hover:text-blue-600">
@@ -192,8 +193,8 @@ const AdminAds = () => {
                         onChange={(e) => e.target.files?.[0] && uploadImage(e.target.files[0])}
                       />
                     </label>
-                    {editAd.image_url && (
-                      <img src={editAd.image_url} alt="" className="w-10 h-10 object-cover rounded" />
+                    {safeImage(editAd.image_url) && (
+                      <img src={safeImage(editAd.image_url)} alt="" className="w-10 h-10 object-cover rounded" />
                     )}
                   </div>
                 </div>

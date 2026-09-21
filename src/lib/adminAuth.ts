@@ -74,7 +74,13 @@ export async function adminLogout() {
   await supabase.auth.signOut();
 }
 
+// Returns the session only if it belongs to the admin account. Anyone can
+// register on the public site, so "has a session" must never mean "is admin".
+// This gates the UI; the database enforces the same rule through RLS
+// (see supabase-security.sql), which is what actually protects the data.
 export async function getAdminSession() {
   const { data } = await supabase.auth.getSession();
-  return data.session;
+  const session = data.session;
+  if (!session) return null;
+  return session.user.email?.toLowerCase() === ADMIN_EMAIL.toLowerCase() ? session : null;
 }

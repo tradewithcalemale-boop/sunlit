@@ -1,6 +1,10 @@
 -- ============================================================
 --  Sunlit Centre Kenya – Supabase Database Setup
 --  Run this entire script in Supabase > SQL Editor
+--
+--  IMPORTANT: the policies below are too permissive on their own (any
+--  logged-in user gets full access). ALWAYS run supabase-security.sql
+--  straight after this file.
 -- ============================================================
 
 -- 1. EXTENSIONS

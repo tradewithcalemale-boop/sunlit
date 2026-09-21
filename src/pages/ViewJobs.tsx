@@ -2,6 +2,7 @@ import { useEffect, useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { supabase, Job } from "@/lib/supabase";
+import { safeImage, safeLink } from "@/lib/safeUrl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
@@ -257,8 +258,8 @@ const ViewJobs = () => {
                     <div className="flex gap-4">
                       {/* Company logo */}
                       <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
-                        {job.company_logo ? (
-                          <img src={job.company_logo} alt={job.company} className="w-10 h-10 object-contain" />
+                        {safeImage(job.company_logo) ? (
+                          <img src={safeImage(job.company_logo)} alt={job.company} className="w-10 h-10 object-contain" />
                         ) : (
                           <Building2 className="w-6 h-6 text-primary" />
                         )}
@@ -311,9 +312,9 @@ const ViewJobs = () => {
 
                         {/* Apply button */}
                         <div className="mt-4">
-                          {job.apply_url ? (
+                          {safeLink(job.apply_url) ? (
                             <a
-                              href={job.apply_url}
+                              href={safeLink(job.apply_url)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
