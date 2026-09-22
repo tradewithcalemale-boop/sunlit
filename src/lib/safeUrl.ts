@@ -27,3 +27,12 @@ function check(url: string | null | undefined, schemes: string[]): string | unde
 
 export const safeLink = (url: string | null | undefined) => check(url, LINK_SCHEMES);
 export const safeImage = (url: string | null | undefined) => check(url, IMAGE_SCHEMES);
+
+// Turns what someone typed (full URL, www. address or bare email) into a safe
+// href, or undefined if it isn't a usable link.
+export function toHref(address: string): string | undefined {
+  if (/^(https?:\/\/|mailto:)/i.test(address)) return safeLink(address);
+  if (/^www\./i.test(address)) return safeLink(`https://${address}`);
+  if (/^[^\s@/]+@[^\s@/]+\.[^\s@/]+$/.test(address)) return safeLink(`mailto:${address}`);
+  return undefined;
+}

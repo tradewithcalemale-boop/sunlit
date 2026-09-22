@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase, Job } from "@/lib/supabase";
 import LinkifiedText from "@/components/LinkifiedText";
+import LinkTextarea from "@/components/LinkTextarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -323,7 +324,7 @@ const AdminJobs = () => {
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">How to Apply <span className="text-muted-foreground font-normal">(links and emails become clickable)</span></label>
-                <Textarea rows={4} maxLength={5000} value={editJob.how_to_apply || ""} onChange={(e) => setEditJob({ ...editJob, how_to_apply: e.target.value })} />
+                <LinkTextarea rows={4} maxLength={5000} value={editJob.how_to_apply || ""} onChange={(v) => setEditJob({ ...editJob, how_to_apply: v })} />
               </div>
               {saveError && (
                 <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{saveError}</p>

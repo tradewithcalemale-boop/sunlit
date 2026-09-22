@@ -6,6 +6,7 @@ import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import LinkTextarea from "@/components/LinkTextarea";
 import { Briefcase, Building2, MapPin, DollarSign, CheckCircle, CalendarClock, Lock } from "lucide-react";
 
 // YYYY-MM-DD in the visitor's own timezone, for the date picker's minimum.
@@ -188,14 +189,16 @@ const SubmitJob = () => {
 
             <div>
               <label className="block text-sm font-medium mb-1">How to Apply</label>
-              <Textarea
+              <LinkTextarea
                 rows={4}
                 maxLength={5000}
-                placeholder={"Explain the application process, e.g.\nSend your CV and cover letter to careers@company.com with the job title as the subject.\nOr apply online: https://company.com/careers/12345"}
+                placeholder={"Explain the application process, e.g.\nSend your CV and cover letter to careers@company.com with the job title as the subject.\nOr use Insert link to add a clickable link like: Apply on our careers page"}
                 value={form.how_to_apply}
-                onChange={set("how_to_apply")}
+                onChange={(v) => setForm((prev) => ({ ...prev, how_to_apply: v }))}
               />
-              <p className="text-xs text-muted-foreground mt-1">You can include links and email addresses; they become clickable for candidates.</p>
+              <p className="text-xs text-muted-foreground mt-1">
+                Web addresses and emails you type become clickable. Use <strong>Insert link</strong> to turn words like "Apply here" into a link to another website.
+              </p>
             </div>
 
             <div>
