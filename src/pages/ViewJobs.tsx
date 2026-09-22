@@ -5,12 +5,13 @@ import { supabase, PublicJob, JobApplyInfo } from "@/lib/supabase";
 import { safeImage, safeLink } from "@/lib/safeUrl";
 import { useAuth } from "@/hooks/useAuth";
 import LinkifiedText from "@/components/LinkifiedText";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import {
   MapPin, Clock, Briefcase, Search, Building2, ChevronRight,
-  Bookmark, SlidersHorizontal, X, ExternalLink, CalendarClock, LogIn,
+  Bookmark, SlidersHorizontal, X, ExternalLink, CalendarClock, LogIn, FileText,
 } from "lucide-react";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship", "Remote"];
@@ -44,7 +45,7 @@ const ViewJobs = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [allJobs, setAllJobs] = useState<PublicJob[]>([]);
   const [applyInfo, setApplyInfo] = useState<Record<string, JobApplyInfo>>({});
-  const [openApply, setOpenApply] = useState<string | null>(null);
+  const [detailJob, setDetailJob] = useState<PublicJob | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
@@ -296,7 +297,9 @@ const ViewJobs = () => {
                         <div className="flex items-start justify-between gap-3 flex-wrap">
                           <div>
                             <h3 className="font-semibold text-base group-hover:text-primary transition-colors">
-                              {job.title}
+                              <button onClick={() => setDetailJob(job)} className="text-left hover:underline">
+                                {job.title}
+                              </button>
                             </h3>
                             <p className="text-sm text-muted-foreground">{job.company}</p>
                           </div>
@@ -344,51 +347,22 @@ const ViewJobs = () => {
                           </p>
                         )}
 
-                        {/* Apply */}
-                        <div className="mt-4">
-                          {authLoading ? null : !isAuthenticated ? (
+                        {/* Actions */}
+                        <div className="mt-4 flex flex-wrap items-center gap-2">
+                          <button
+                            onClick={() => setDetailJob(job)}
+                            className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                          >
+                            <FileText className="w-3.5 h-3.5" />
+                            {isAuthenticated ? "View Details & Apply" : "View Details"}
+                          </button>
+                          {!authLoading && !isAuthenticated && (
                             <Link
                               to="/login-register?returnUrl=/view-jobs"
-                              className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                              className="inline-flex items-center gap-1.5 border border-border text-sm font-semibold px-4 py-2 rounded-lg hover:bg-accent transition-colors"
                             >
                               <LogIn className="w-3.5 h-3.5" /> Sign in to Apply
                             </Link>
-                          ) : (
-                            <>
-                              <button
-                                onClick={() => setOpenApply(openApply === job.id ? null : job.id)}
-                                className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
-                              >
-                                How to Apply <ChevronRight className={`w-3.5 h-3.5 transition-transform ${openApply === job.id ? "rotate-90" : ""}`} />
-                              </button>
-                              {openApply === job.id && (() => {
-                                const info = applyInfo[job.id];
-                                const link = safeLink(info?.apply_url);
-                                return (
-                                  <div className="mt-3 rounded-xl border border-border bg-secondary/40 p-4 space-y-3">
-                                    {info?.how_to_apply ? (
-                                      <LinkifiedText text={info.how_to_apply} className="text-sm text-foreground" />
-                                    ) : !link ? (
-                                      <p className="text-sm text-muted-foreground">Contact us to apply for this role.</p>
-                                    ) : null}
-                                    {link ? (
-                                      <a
-                                        href={link}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline"
-                                      >
-                                        Apply Now <ExternalLink className="w-3.5 h-3.5" />
-                                      </a>
-                                    ) : !info?.how_to_apply ? (
-                                      <Link to="/contact-us" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-                                        Contact us <ChevronRight className="w-3.5 h-3.5" />
-                                      </Link>
-                                    ) : null}
-                                  </div>
-                                );
-                              })()}
-                            </>
                           )}
                         </div>
                       </div>
@@ -400,6 +374,90 @@ const ViewJobs = () => {
           </div>
         </div>
       </div>
+
+      {/* Job details: full description and requirements for everyone; how to
+          apply only for signed-in users (the database won't send it otherwise). */}
+      <Dialog open={!!detailJob} onOpenChange={(open) => !open && setDetailJob(null)}>
+        <DialogContent className="max-w-3xl max-h-[88vh] overflow-y-auto">
+          {detailJob && (() => {
+            const info = applyInfo[detailJob.id];
+            const link = safeLink(info?.apply_url);
+            return (
+              <>
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-serif pr-6">{detailJob.title}</DialogTitle>
+                  <DialogDescription className="text-base">{detailJob.company}</DialogDescription>
+                </DialogHeader>
+
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                  <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {detailJob.location}</span>
+                  <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" /> {detailJob.type}</span>
+                  <span>{detailJob.category}</span>
+                  {detailJob.salary_range && <span>{detailJob.salary_range}</span>}
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Posted {timeSince(detailJob.created_at)}</span>
+                </div>
+
+                {detailJob.deadline && (
+                  <p className={`flex items-center gap-1.5 text-sm font-semibold ${daysLeft(detailJob.deadline) <= 3 ? "text-destructive" : "text-foreground"}`}>
+                    <CalendarClock className="w-4 h-4" /> Application deadline: {formatDeadline(detailJob.deadline)}
+                  </p>
+                )}
+
+                <section>
+                  <h4 className="font-semibold mb-2">Job Description</h4>
+                  <LinkifiedText text={detailJob.description} className="text-sm text-foreground leading-relaxed" />
+                </section>
+
+                {detailJob.requirements && (
+                  <section>
+                    <h4 className="font-semibold mb-2">Requirements &amp; Qualifications</h4>
+                    <LinkifiedText text={detailJob.requirements} className="text-sm text-foreground leading-relaxed" />
+                  </section>
+                )}
+
+                <section className="rounded-xl border border-border bg-secondary/40 p-4">
+                  <h4 className="font-semibold mb-2">How to Apply</h4>
+                  {!isAuthenticated ? (
+                    <div className="space-y-3">
+                      <p className="text-sm text-muted-foreground">
+                        Sign in or create a free account to see how to apply for this job.
+                      </p>
+                      <Link
+                        to="/login-register?returnUrl=/view-jobs"
+                        className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                      >
+                        <LogIn className="w-3.5 h-3.5" /> Sign in to Apply
+                      </Link>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {info?.how_to_apply ? (
+                        <LinkifiedText text={info.how_to_apply} className="text-sm text-foreground" />
+                      ) : !link ? (
+                        <p className="text-sm text-muted-foreground">Contact us to apply for this role.</p>
+                      ) : null}
+                      {link ? (
+                        <a
+                          href={link}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
+                        >
+                          Apply Now <ExternalLink className="w-3.5 h-3.5" />
+                        </a>
+                      ) : !info?.how_to_apply ? (
+                        <Link to="/contact-us" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
+                          Contact us <ChevronRight className="w-3.5 h-3.5" />
+                        </Link>
+                      ) : null}
+                    </div>
+                  )}
+                </section>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
 
       {/* Employer CTA */}
       <section className="bg-secondary py-14">

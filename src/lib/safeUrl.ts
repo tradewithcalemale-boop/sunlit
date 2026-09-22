@@ -8,6 +8,7 @@
 
 const LINK_SCHEMES = ["http:", "https:", "mailto:"];
 const IMAGE_SCHEMES = ["http:", "https:"];
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 function check(url: string | null | undefined, schemes: string[]): string | undefined {
   if (!url) return undefined;
@@ -15,7 +16,10 @@ function check(url: string | null | undefined, schemes: string[]): string | unde
   if (!trimmed) return undefined;
   try {
     const parsed = new URL(trimmed);
-    return schemes.includes(parsed.protocol) ? parsed.href : undefined;
+    if (!schemes.includes(parsed.protocol)) return undefined;
+    // "mailto:" must be one real address, not a sentence someone pasted in.
+    if (parsed.protocol === "mailto:" && !EMAIL.test(decodeURIComponent(parsed.pathname))) return undefined;
+    return parsed.href;
   } catch {
     return undefined;
   }

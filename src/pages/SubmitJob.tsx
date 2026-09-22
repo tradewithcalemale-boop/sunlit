@@ -32,12 +32,19 @@ const SubmitJob = () => {
     // The database only accepts http(s) and mailto links, so fix up the
     // common "www.company.com" or bare-email entries instead of rejecting them.
     let applyUrl = form.apply_url.trim();
-    if (applyUrl && !/^(https?:\/\/|mailto:)/i.test(applyUrl)) {
-      applyUrl = applyUrl.includes("@") && !applyUrl.includes("/") ? `mailto:${applyUrl}` : `https://${applyUrl}`;
+    let howToApply = form.how_to_apply.trim();
+    if (/\s/.test(applyUrl)) {
+      // Instructions typed into the link box: a link has no spaces, so keep
+      // the text by moving it into How to Apply instead of making a broken link.
+      howToApply = howToApply ? `${howToApply}\n\n${applyUrl}` : applyUrl;
+      applyUrl = "";
+    } else if (applyUrl && !/^(https?:\/\/|mailto:)/i.test(applyUrl)) {
+      applyUrl = /^[^@]+@[^@]+\.[^@]+$/.test(applyUrl) ? `mailto:${applyUrl}` : `https://${applyUrl}`;
     }
     const { error: err } = await supabase.from("jobs").insert({
       ...form,
       apply_url: applyUrl,
+      how_to_apply: howToApply,
       status: "pending",
     });
     setLoading(false);
