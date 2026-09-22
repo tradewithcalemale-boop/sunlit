@@ -8,7 +8,7 @@ import LinkifiedText from "@/components/LinkifiedText";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   MapPin, Clock, Briefcase, Search, Building2, ChevronRight,
   Bookmark, SlidersHorizontal, X, ExternalLink, CalendarClock, LogIn, FileText,
@@ -53,6 +53,8 @@ const ViewJobs = () => {
   const [selectedCat, setSelectedCat] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [saved, setSaved] = useState<Set<string>>(new Set());
+  const [showSavedOnly, setShowSavedOnly] = useState(false);
+  const navigate = useNavigate();
 
   // Anyone can browse. The view has no employer contact details and only
   // lists approved jobs whose deadline hasn't passed.
@@ -69,6 +71,14 @@ const ViewJobs = () => {
 
   // How to apply is only served to signed-in users (the database refuses it
   // to visitors), so applying requires an account.
+  useEffect(() => {
+    if (!isAuthenticated) { setSaved(new Set()); setShowSavedOnly(false); return; }
+    supabase
+      .from("saved_jobs")
+      .select("job_id")
+      .then(({ data }) => setSaved(new Set((data || []).map((r: { job_id: string }) => r.job_id))));
+  }, [isAuthenticated]);
+
   useEffect(() => {
     if (!isAuthenticated) { setApplyInfo({}); return; }
     supabase
@@ -89,16 +99,34 @@ const ViewJobs = () => {
       const matchLoc = !loc || j.location.toLowerCase().includes(loc);
       const matchType = selectedType.length === 0 || selectedType.includes(j.type);
       const matchCat = selectedCat.length === 0 || selectedCat.includes(j.category);
-      return matchSearch && matchLoc && matchType && matchCat;
+      const matchSaved = !showSavedOnly || saved.has(j.id);
+      return matchSearch && matchLoc && matchType && matchCat && matchSaved;
     });
-  }, [allJobs, search, location, selectedType, selectedCat]);
+  }, [allJobs, search, location, selectedType, selectedCat, showSavedOnly, saved]);
 
   const toggleType = (t: string) =>
     setSelectedType((prev) => prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]);
   const toggleCat = (c: string) =>
     setSelectedCat((prev) => prev.includes(c) ? prev.filter((x) => x !== c) : [...prev, c]);
-  const toggleSave = (id: string) =>
-    setSaved((prev) => { const next = new Set(prev); next.has(id) ? next.delete(id) : next.add(id); return next; });
+  // Saved jobs belong to the user's account (saved_jobs table), so they're
+  // kept across visits and devices. Visitors are sent to sign in first.
+  const toggleSave = async (id: string) => {
+    if (!isAuthenticated) {
+      navigate("/login-register?returnUrl=/view-jobs");
+      return;
+    }
+    const wasSaved = saved.has(id);
+    const flip = (prev: Set<string>) => {
+      const next = new Set(prev);
+      if (wasSaved) next.delete(id); else next.add(id);
+      return next;
+    };
+    setSaved(flip); // show the change straight away
+    const { error } = wasSaved
+      ? await supabase.from("saved_jobs").delete().eq("job_id", id)
+      : await supabase.from("saved_jobs").insert({ job_id: id });
+    if (error) setSaved((prev) => { const next = new Set(prev); if (wasSaved) next.add(id); else next.delete(id); return next; }); // undo
+  };
 
   const clearFilters = () => { setSearch(""); setLocation(""); setSelectedType([]); setSelectedCat([]); };
   const hasFilters = search || location || selectedType.length || selectedCat.length;
@@ -218,6 +246,15 @@ const ViewJobs = () => {
                 <span className="font-semibold text-foreground">{filtered.length}</span> job{filtered.length !== 1 ? "s" : ""} found
                 {hasFilters ? " (filtered)" : ""}
               </p>
+              {isAuthenticated && (
+                <button
+                  onClick={() => setShowSavedOnly(!showSavedOnly)}
+                  className={`flex items-center gap-1.5 text-sm font-medium rounded-lg px-3 py-1.5 border transition-colors ${showSavedOnly ? "bg-primary text-white border-primary" : "border-border hover:bg-accent"}`}
+                >
+                  <Bookmark className={`w-4 h-4 ${showSavedOnly ? "fill-current" : ""}`} />
+                  Saved jobs ({saved.size})
+                </button>
+              )}
               <button
                 className="lg:hidden flex items-center gap-2 text-sm font-medium border border-border rounded-lg px-3 py-1.5 hover:bg-accent"
                 onClick={() => setShowFilters(!showFilters)}
@@ -307,7 +344,7 @@ const ViewJobs = () => {
                             <button
                               onClick={() => toggleSave(job.id)}
                               className={`p-1.5 rounded-lg transition-colors ${saved.has(job.id) ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-gray-100"}`}
-                              title={saved.has(job.id) ? "Unsave" : "Save job"}
+                              title={!isAuthenticated ? "Sign in to save this job" : saved.has(job.id) ? "Remove from saved jobs" : "Save job"}
                             >
                               <Bookmark className={`w-4 h-4 ${saved.has(job.id) ? "fill-current" : ""}`} />
                             </button>
@@ -387,6 +424,13 @@ const ViewJobs = () => {
                 <DialogHeader>
                   <DialogTitle className="text-xl font-serif pr-6">{detailJob.title}</DialogTitle>
                   <DialogDescription className="text-base">{detailJob.company}</DialogDescription>
+                  <button
+                    onClick={() => toggleSave(detailJob.id)}
+                    className={`self-start mt-1 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg px-3 py-1.5 border transition-colors ${saved.has(detailJob.id) ? "bg-primary/10 text-primary border-primary/30" : "border-border hover:bg-accent"}`}
+                  >
+                    <Bookmark className={`w-4 h-4 ${saved.has(detailJob.id) ? "fill-current" : ""}`} />
+                    {!isAuthenticated ? "Sign in to save" : saved.has(detailJob.id) ? "Saved" : "Save job"}
+                  </button>
                 </DialogHeader>
 
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">

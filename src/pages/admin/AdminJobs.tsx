@@ -3,7 +3,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase, Job } from "@/lib/supabase";
 import LinkifiedText from "@/components/LinkifiedText";
 import LinkTextarea from "@/components/LinkTextarea";
-import { JOB_LIMITS, validateJob, normalizeApplyUrl, friendlyJobError } from "@/lib/jobValidation";
+import { validateJob, normalizeApplyUrl, friendlyJobError } from "@/lib/jobValidation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -329,20 +329,14 @@ const AdminJobs = () => {
               <div>
                 <label className="block text-xs font-medium mb-1">Description</label>
                 <Textarea rows={5} value={editJob.description || ""} onChange={(e) => setEditJob({ ...editJob, description: e.target.value })} />
-                <p className={`text-xs mt-1 text-right ${(editJob.description || "").length > JOB_LIMITS.description[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
-                  {(editJob.description || "").length.toLocaleString("en-US")} / {JOB_LIMITS.description[1].toLocaleString("en-US")} characters
-                </p>
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">Requirements</label>
                 <Textarea rows={4} value={editJob.requirements || ""} onChange={(e) => setEditJob({ ...editJob, requirements: e.target.value })} />
-                <p className={`text-xs mt-1 text-right ${(editJob.requirements || "").length > JOB_LIMITS.requirements[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
-                  {(editJob.requirements || "").length.toLocaleString("en-US")} / {JOB_LIMITS.requirements[1].toLocaleString("en-US")} characters
-                </p>
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">How to Apply <span className="text-muted-foreground font-normal">(links and emails become clickable)</span></label>
-                <LinkTextarea rows={4} maxLength={5000} value={editJob.how_to_apply || ""} onChange={(v) => setEditJob({ ...editJob, how_to_apply: v })} />
+                <LinkTextarea rows={4} value={editJob.how_to_apply || ""} onChange={(v) => setEditJob({ ...editJob, how_to_apply: v })} />
               </div>
               {saveError && (
                 <p className="text-sm text-destructive bg-destructive/10 rounded-md px-3 py-2">{saveError}</p>

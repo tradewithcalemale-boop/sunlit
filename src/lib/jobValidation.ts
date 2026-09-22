@@ -3,24 +3,28 @@ import { safeLink, safeImage } from "@/lib/safeUrl";
 // Field limits, kept in step with the CHECK constraints in
 // supabase-security.sql. Checking here first means the form can say exactly
 // which field is wrong instead of showing a raw database error.
+// Description, requirements and how to apply have no limit; public
+// submissions only get one very large overall cap (PUBLIC_TEXT_CAP).
 export const JOB_LIMITS = {
   title: ["Job Title", 200],
   company: ["Company", 200],
   location: ["Location", 200],
   type: ["Employment Type", 50],
   category: ["Category", 100],
-  description: ["Job Description", 20000],
-  requirements: ["Requirements", 20000],
   salary_range: ["Salary Range", 100],
   contact_name: ["Contact Person", 200],
   contact_email: ["Contact Email", 320],
   contact_phone: ["Contact Phone", 50],
   apply_url: ["Application Link", 2048],
   company_logo: ["Company Logo URL", 2048],
-  how_to_apply: ["How to Apply", 5000],
 } as const;
 
-type JobFields = Partial<Record<keyof typeof JOB_LIMITS, string | null | undefined>>;
+// Matches the cap in guard_public_submission (roughly 60 pages).
+export const PUBLIC_TEXT_CAP = 200000;
+
+type JobFields = Partial<
+  Record<keyof typeof JOB_LIMITS | "description" | "requirements" | "how_to_apply", string | null | undefined>
+>;
 
 const n = (x: number) => x.toLocaleString("en-US");
 
@@ -36,7 +40,13 @@ export function normalizeApplyUrl(raw: string | null | undefined): { url: string
 }
 
 // Returns a message naming the first problem, or null if the job can be saved.
-export function validateJob(job: JobFields): string | null {
+export function validateJob(job: JobFields, opts: { publicSubmission?: boolean } = {}): string | null {
+  if (opts.publicSubmission) {
+    const total = (job.description || "").length + (job.requirements || "").length + (job.how_to_apply || "").length;
+    if (total > PUBLIC_TEXT_CAP) {
+      return `This listing is very long (${n(total)} characters). Please shorten it to under ${n(PUBLIC_TEXT_CAP)}, or email it to us.`;
+    }
+  }
   for (const [key, [label, max]] of Object.entries(JOB_LIMITS) as [keyof typeof JOB_LIMITS, readonly [string, number]][]) {
     const len = (job[key] || "").length;
     if (len > max) {

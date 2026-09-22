@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LinkTextarea from "@/components/LinkTextarea";
-import { JOB_LIMITS, validateJob, normalizeApplyUrl, friendlyJobError } from "@/lib/jobValidation";
+import { validateJob, normalizeApplyUrl, friendlyJobError } from "@/lib/jobValidation";
 import { Briefcase, Building2, MapPin, DollarSign, CheckCircle, CalendarClock, Lock } from "lucide-react";
 
 // YYYY-MM-DD in the visitor's own timezone, for the date picker's minimum.
@@ -35,7 +35,7 @@ const SubmitJob = () => {
     const { url: applyUrl, moveToHowToApply } = normalizeApplyUrl(form.apply_url);
     const howToApply = [form.how_to_apply.trim(), moveToHowToApply].filter(Boolean).join("\n\n");
     const record = { ...form, apply_url: applyUrl, how_to_apply: howToApply };
-    const problem = validateJob(record);
+    const problem = validateJob(record, { publicSubmission: true });
     if (problem) {
       setError(problem);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -48,6 +48,8 @@ const SubmitJob = () => {
       setError(
         err.message.includes("Too many")
           ? "We're receiving a lot of submissions right now. Please try again in a minute."
+          : err.message.includes("too long to submit")
+          ? "This listing is too long to submit online. Please shorten it or email it to us."
           : err.message.toLowerCase().includes("deadline")
           ? "Please choose an application deadline that is today or later."
           : err.message.includes("check constraint")
@@ -189,7 +191,6 @@ const SubmitJob = () => {
               <label className="block text-sm font-medium mb-1">How to Apply</label>
               <LinkTextarea
                 rows={4}
-                maxLength={5000}
                 placeholder={"Explain the application process, e.g.\nSend your CV and cover letter to careers@company.com with the job title as the subject.\nOr use Insert link to add a clickable link like: Apply on our careers page"}
                 value={form.how_to_apply}
                 onChange={(v) => setForm((prev) => ({ ...prev, how_to_apply: v }))}
@@ -208,17 +209,11 @@ const SubmitJob = () => {
             <div>
               <label className="block text-sm font-medium mb-1">Job Description <span className="text-destructive">*</span></label>
               <Textarea placeholder="Describe the role, responsibilities, and day-to-day tasks…" rows={5} required value={form.description} onChange={set("description")} />
-              <p className={`text-xs mt-1 text-right ${(form.description || "").length > JOB_LIMITS.description[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
-                  {(form.description || "").length.toLocaleString("en-US")} / {JOB_LIMITS.description[1].toLocaleString("en-US")} characters
-                </p>
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Requirements &amp; Qualifications <span className="text-destructive">*</span></label>
               <Textarea placeholder="List educational qualifications, experience, and skills required…" rows={4} required value={form.requirements} onChange={set("requirements")} />
-              <p className={`text-xs mt-1 text-right ${(form.requirements || "").length > JOB_LIMITS.requirements[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
-                  {(form.requirements || "").length.toLocaleString("en-US")} / {JOB_LIMITS.requirements[1].toLocaleString("en-US")} characters
-                </p>
             </div>
 
             <Button type="submit" variant="cta" size="lg" className="w-full" disabled={loading}>

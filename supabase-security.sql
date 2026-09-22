@@ -15,6 +15,7 @@
 --      apply link) are only served to signed-in users
 --   6. Deletes jobs automatically once their deadline day has passed
 --      (Kenya time), every night just after midnight
+--   7. Lets signed-in users save (bookmark) jobs to their own account
 --
 -- The admin is identified by user ID, not email. If you ever change the admin
 -- account, update the UUID in public.is_admin() below AND ADMIN_EMAIL in
@@ -114,6 +115,13 @@ BEGIN
 
   IF TG_TABLE_NAME = 'jobs' THEN
     NEW.status := 'pending';
+    -- One generous cap (about 60 pages) so the public form can't be used to
+    -- flood the database. The admin has no limit.
+    IF char_length(coalesce(NEW.description, '')) + char_length(coalesce(NEW.requirements, ''))
+       + char_length(coalesce(NEW.how_to_apply, '')) > 200000 THEN
+      RAISE EXCEPTION 'This job listing is too long to submit online. Please shorten it or email it to us.'
+        USING ERRCODE = 'P0001';
+    END IF;
     IF NEW.deadline < public.kenya_today() THEN
       RAISE EXCEPTION 'Please choose an application deadline that is today or later.'
         USING ERRCODE = 'P0001';
@@ -157,10 +165,10 @@ ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_type_len;
 ALTER TABLE public.jobs ADD  CONSTRAINT jobs_type_len         CHECK (char_length(type) <= 50) NOT VALID;
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_category_len;
 ALTER TABLE public.jobs ADD  CONSTRAINT jobs_category_len     CHECK (char_length(category) <= 100) NOT VALID;
+-- Description, requirements and how to apply have no length limit. (Public
+-- submissions get one very large overall cap in guard_public_submission.)
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_description_len;
-ALTER TABLE public.jobs ADD  CONSTRAINT jobs_description_len  CHECK (char_length(description) <= 20000) NOT VALID;
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_requirements_len;
-ALTER TABLE public.jobs ADD  CONSTRAINT jobs_requirements_len CHECK (char_length(coalesce(requirements, '')) <= 20000) NOT VALID;
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_salary_range_len;
 ALTER TABLE public.jobs ADD  CONSTRAINT jobs_salary_range_len CHECK (char_length(coalesce(salary_range, '')) <= 100) NOT VALID;
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_contact_len;
@@ -184,8 +192,6 @@ ALTER TABLE public.jobs ADD  CONSTRAINT jobs_logo_safe CHECK (
 -- would also block approving existing jobs that predate the field.)
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_deadline_required;
 ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_how_to_apply_len;
-ALTER TABLE public.jobs ADD CONSTRAINT jobs_how_to_apply_len
-  CHECK (char_length(coalesce(how_to_apply, '')) <= 5000) NOT VALID;
 
 ALTER TABLE public.contact_submissions DROP CONSTRAINT IF EXISTS contact_safe_input;
 ALTER TABLE public.contact_submissions ADD CONSTRAINT contact_safe_input CHECK (
@@ -250,6 +256,30 @@ REVOKE ALL ON public.jobs_public     FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON public.jobs_apply_info FROM PUBLIC, anon, authenticated;
 GRANT SELECT ON public.jobs_public     TO anon, authenticated;
 GRANT SELECT ON public.jobs_apply_info TO authenticated;
+
+NOTIFY pgrst, 'reload schema';
+
+-- 7b. Saved jobs ------------------------------------------------------------------
+-- Each signed-in user's bookmarks. Removed automatically when the job is
+-- deleted (e.g. after its deadline) or the user account is deleted.
+CREATE TABLE IF NOT EXISTS public.saved_jobs (
+  user_id    uuid        NOT NULL DEFAULT auth.uid() REFERENCES auth.users(id) ON DELETE CASCADE,
+  job_id     uuid        NOT NULL REFERENCES public.jobs(id) ON DELETE CASCADE,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (user_id, job_id)
+);
+ALTER TABLE public.saved_jobs ENABLE ROW LEVEL SECURITY;
+
+-- Users see and change only their own saved jobs.
+DROP POLICY IF EXISTS saved_jobs_own_read   ON public.saved_jobs;
+DROP POLICY IF EXISTS saved_jobs_own_add    ON public.saved_jobs;
+DROP POLICY IF EXISTS saved_jobs_own_remove ON public.saved_jobs;
+CREATE POLICY saved_jobs_own_read   ON public.saved_jobs FOR SELECT TO authenticated USING (user_id = auth.uid());
+CREATE POLICY saved_jobs_own_add    ON public.saved_jobs FOR INSERT TO authenticated WITH CHECK (user_id = auth.uid());
+CREATE POLICY saved_jobs_own_remove ON public.saved_jobs FOR DELETE TO authenticated USING (user_id = auth.uid());
+
+REVOKE ALL ON public.saved_jobs FROM PUBLIC, anon, authenticated;
+GRANT SELECT, INSERT, DELETE ON public.saved_jobs TO authenticated;
 
 NOTIFY pgrst, 'reload schema';
 
