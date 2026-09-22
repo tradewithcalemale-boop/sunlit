@@ -13,6 +13,8 @@
 --   5. Keeps employers' contact details private: the public job board reads
 --      from a view without them, and application details (how to apply,
 --      apply link) are only served to signed-in users
+--   6. Deletes jobs automatically once their deadline day has passed
+--      (Kenya time), every night just after midnight
 --
 -- The admin is identified by user ID, not email. If you ever change the admin
 -- account, update the UUID in public.is_admin() below AND ADMIN_EMAIL in
@@ -26,6 +28,16 @@ LANGUAGE sql STABLE
 SET search_path = ''
 AS $$
   SELECT COALESCE(auth.uid() = 'eec43e0c-d42e-4bcb-b3ad-70d7dcede0b9'::uuid, false);
+$$;
+
+-- Today's date in Kenya. The database clock runs on UTC, three hours behind
+-- Nairobi, so plain current_date would keep a job open until 3am.
+CREATE OR REPLACE FUNCTION public.kenya_today()
+RETURNS date
+LANGUAGE sql STABLE
+SET search_path = ''
+AS $$
+  SELECT (now() AT TIME ZONE 'Africa/Nairobi')::date;
 $$;
 
 -- 1b. Job fields ---------------------------------------------------------------
@@ -102,7 +114,7 @@ BEGIN
 
   IF TG_TABLE_NAME = 'jobs' THEN
     NEW.status := 'pending';
-    IF NEW.deadline < current_date THEN
+    IF NEW.deadline < public.kenya_today() THEN
       RAISE EXCEPTION 'Please choose an application deadline that is today or later.'
         USING ERRCODE = 'P0001';
     END IF;
@@ -209,13 +221,13 @@ CREATE OR REPLACE VIEW public.jobs_public AS
 SELECT id, title, company, company_logo, location, type, category,
        description, requirements, salary_range, deadline, created_at
 FROM public.jobs
-WHERE status = 'approved' AND (deadline IS NULL OR deadline >= current_date);
+WHERE status = 'approved' AND (deadline IS NULL OR deadline >= public.kenya_today());
 
 -- How to apply: signed-in users only, so visitors must register to apply.
 CREATE OR REPLACE VIEW public.jobs_apply_info AS
 SELECT id, apply_url, how_to_apply
 FROM public.jobs
-WHERE status = 'approved' AND (deadline IS NULL OR deadline >= current_date);
+WHERE status = 'approved' AND (deadline IS NULL OR deadline >= public.kenya_today());
 
 REVOKE ALL ON public.jobs_public     FROM PUBLIC, anon, authenticated;
 REVOKE ALL ON public.jobs_apply_info FROM PUBLIC, anon, authenticated;
@@ -224,9 +236,33 @@ GRANT SELECT ON public.jobs_apply_info TO authenticated;
 
 NOTIFY pgrst, 'reload schema';
 
--- 8. Check the result -----------------------------------------------------------
-SELECT tablename, policyname, cmd, roles
-FROM pg_policies
-WHERE (schemaname = 'public' AND tablename IN ('jobs','advertisements','contact_submissions','site_content'))
-   OR (schemaname = 'storage' AND policyname LIKE 'media_%')
-ORDER BY tablename, policyname;
+-- 8. Delete expired jobs automatically -------------------------------------------
+-- A job's deadline is the last day to apply. From the next day (Kenya time) it
+-- is deleted for good. Jobs without a deadline (posted before the field
+-- existed) are never deleted by this; give them a deadline in the admin.
+CREATE OR REPLACE FUNCTION public.delete_expired_jobs()
+RETURNS integer
+LANGUAGE plpgsql SECURITY DEFINER
+SET search_path = ''
+AS $$
+DECLARE removed integer;
+BEGIN
+  DELETE FROM public.jobs WHERE deadline IS NOT NULL AND deadline < public.kenya_today();
+  GET DIAGNOSTICS removed = ROW_COUNT;
+  RETURN removed;
+END $$;
+
+-- Only the scheduler (and the admin, via SQL) may run it.
+REVOKE ALL ON FUNCTION public.delete_expired_jobs() FROM PUBLIC, anon, authenticated;
+
+-- Clear out anything already expired right now.
+SELECT public.delete_expired_jobs() AS expired_jobs_deleted_now;
+
+-- Every night at 00:05 Kenya time (21:05 UTC; the scheduler runs on UTC).
+-- Scheduling under the same name replaces the old schedule, so re-running is safe.
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+SELECT cron.schedule('delete-expired-jobs', '5 21 * * *', 'SELECT public.delete_expired_jobs()');
+
+-- 9. Check the result -----------------------------------------------------------
+-- You should see one row: delete-expired-jobs | 5 21 * * * | active = true
+SELECT jobname, schedule, command, active FROM cron.job WHERE jobname = 'delete-expired-jobs';
