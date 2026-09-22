@@ -144,23 +144,40 @@ CREATE TRIGGER guard_public_submission BEFORE INSERT ON public.contact_submissio
 
 -- 5. Input limits and safe links ---------------------------------------------
 -- NOT VALID: applies to new and edited rows without failing on existing data.
-ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_safe_input;
-ALTER TABLE public.jobs ADD CONSTRAINT jobs_safe_input CHECK (
-      char_length(title) <= 200
-  AND char_length(company) <= 200
-  AND char_length(location) <= 200
-  AND char_length(type) <= 50
-  AND char_length(category) <= 100
-  AND char_length(description) <= 10000
-  AND char_length(coalesce(requirements, '')) <= 10000
-  AND char_length(coalesce(salary_range, '')) <= 100
-  AND char_length(coalesce(contact_name, '')) <= 200
+-- One named constraint per field, so an error says which field is wrong.
+-- Limits match src/lib/jobValidation.ts, which checks them in the form first.
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_safe_input;  -- old combined check
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_title_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_title_len        CHECK (char_length(title) <= 200) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_company_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_company_len      CHECK (char_length(company) <= 200) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_location_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_location_len     CHECK (char_length(location) <= 200) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_type_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_type_len         CHECK (char_length(type) <= 50) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_category_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_category_len     CHECK (char_length(category) <= 100) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_description_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_description_len  CHECK (char_length(description) <= 20000) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_requirements_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_requirements_len CHECK (char_length(coalesce(requirements, '')) <= 20000) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_salary_range_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_salary_range_len CHECK (char_length(coalesce(salary_range, '')) <= 100) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_contact_len;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_contact_len CHECK (
+      char_length(coalesce(contact_name, '')) <= 200
   AND char_length(coalesce(contact_email, '')) <= 320
   AND char_length(coalesce(contact_phone, '')) <= 50
-  AND char_length(coalesce(apply_url, '')) <= 2048
-  AND char_length(coalesce(company_logo, '')) <= 2048
-  AND (coalesce(apply_url, '') = ''    OR apply_url    ~* '^(https?://|mailto:)')
-  AND (coalesce(company_logo, '') = '' OR company_logo ~* '^https?://')
+) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_apply_url_safe;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_apply_url_safe CHECK (
+  coalesce(apply_url, '') = ''
+  OR (char_length(apply_url) <= 2048 AND apply_url ~* '^(https?://|mailto:)' AND apply_url !~ '\s')
+) NOT VALID;
+ALTER TABLE public.jobs DROP CONSTRAINT IF EXISTS jobs_logo_safe;
+ALTER TABLE public.jobs ADD  CONSTRAINT jobs_logo_safe CHECK (
+  coalesce(company_logo, '') = ''
+  OR (char_length(company_logo) <= 2048 AND company_logo ~* '^https?://')
 ) NOT VALID;
 
 -- (Deadline is required by the insert trigger above, not a CHECK: a CHECK

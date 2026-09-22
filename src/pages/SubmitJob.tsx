@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LinkTextarea from "@/components/LinkTextarea";
+import { JOB_LIMITS, validateJob, normalizeApplyUrl, friendlyJobError } from "@/lib/jobValidation";
 import { Briefcase, Building2, MapPin, DollarSign, CheckCircle, CalendarClock, Lock } from "lucide-react";
 
 // YYYY-MM-DD in the visitor's own timezone, for the date picker's minimum.
@@ -28,26 +29,20 @@ const SubmitJob = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError("");
-    // The database only accepts http(s) and mailto links, so fix up the
-    // common "www.company.com" or bare-email entries instead of rejecting them.
-    let applyUrl = form.apply_url.trim();
-    let howToApply = form.how_to_apply.trim();
-    if (/\s/.test(applyUrl)) {
-      // Instructions typed into the link box: a link has no spaces, so keep
-      // the text by moving it into How to Apply instead of making a broken link.
-      howToApply = howToApply ? `${howToApply}\n\n${applyUrl}` : applyUrl;
-      applyUrl = "";
-    } else if (applyUrl && !/^(https?:\/\/|mailto:)/i.test(applyUrl)) {
-      applyUrl = /^[^@]+@[^@]+\.[^@]+$/.test(applyUrl) ? `mailto:${applyUrl}` : `https://${applyUrl}`;
+    // Tidy the Application Link (adds https://, and moves instructions typed
+    // into it over to How to Apply instead of making a broken link).
+    const { url: applyUrl, moveToHowToApply } = normalizeApplyUrl(form.apply_url);
+    const howToApply = [form.how_to_apply.trim(), moveToHowToApply].filter(Boolean).join("\n\n");
+    const record = { ...form, apply_url: applyUrl, how_to_apply: howToApply };
+    const problem = validateJob(record);
+    if (problem) {
+      setError(problem);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
     }
-    const { error: err } = await supabase.from("jobs").insert({
-      ...form,
-      apply_url: applyUrl,
-      how_to_apply: howToApply,
-      status: "pending",
-    });
+    setLoading(true);
+    const { error: err } = await supabase.from("jobs").insert({ ...record, status: "pending" });
     setLoading(false);
     if (err) {
       setError(
@@ -55,8 +50,11 @@ const SubmitJob = () => {
           ? "We're receiving a lot of submissions right now. Please try again in a minute."
           : err.message.toLowerCase().includes("deadline")
           ? "Please choose an application deadline that is today or later."
+          : err.message.includes("check constraint")
+          ? friendlyJobError(err.message)
           : "Something went wrong. Please check your details and try again."
       );
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       setSubmitted(true);
       window.scrollTo({ top: 0, behavior: "smooth" });
@@ -210,11 +208,17 @@ const SubmitJob = () => {
             <div>
               <label className="block text-sm font-medium mb-1">Job Description <span className="text-destructive">*</span></label>
               <Textarea placeholder="Describe the role, responsibilities, and day-to-day tasks…" rows={5} required value={form.description} onChange={set("description")} />
+              <p className={`text-xs mt-1 text-right ${(form.description || "").length > JOB_LIMITS.description[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                  {(form.description || "").length.toLocaleString("en-US")} / {JOB_LIMITS.description[1].toLocaleString("en-US")} characters
+                </p>
             </div>
 
             <div>
               <label className="block text-sm font-medium mb-1">Requirements &amp; Qualifications <span className="text-destructive">*</span></label>
               <Textarea placeholder="List educational qualifications, experience, and skills required…" rows={4} required value={form.requirements} onChange={set("requirements")} />
+              <p className={`text-xs mt-1 text-right ${(form.requirements || "").length > JOB_LIMITS.requirements[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                  {(form.requirements || "").length.toLocaleString("en-US")} / {JOB_LIMITS.requirements[1].toLocaleString("en-US")} characters
+                </p>
             </div>
 
             <Button type="submit" variant="cta" size="lg" className="w-full" disabled={loading}>

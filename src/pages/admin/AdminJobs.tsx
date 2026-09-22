@@ -3,6 +3,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { supabase, Job } from "@/lib/supabase";
 import LinkifiedText from "@/components/LinkifiedText";
 import LinkTextarea from "@/components/LinkTextarea";
+import { JOB_LIMITS, validateJob, normalizeApplyUrl, friendlyJobError } from "@/lib/jobValidation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,10 +73,21 @@ const AdminJobs = () => {
       setSaveError("Please set an application deadline.");
       return;
     }
+    // Tidy the Application Link (adds https://, moves pasted instructions
+    // into How to Apply), then check every field before sending.
+    const { url, moveToHowToApply } = normalizeApplyUrl(editJob.apply_url);
+    const howToApply = moveToHowToApply
+      ? [editJob.how_to_apply?.trim(), moveToHowToApply].filter(Boolean).join("\n\n")
+      : editJob.how_to_apply || "";
+    // An empty date field must be sent as null, not "".
+    const record = { ...editJob, apply_url: url || null, how_to_apply: howToApply, deadline: editJob.deadline || null };
+    const problem = validateJob(record);
+    if (problem) {
+      setSaveError(problem);
+      return;
+    }
     setSaving(true);
     setSaveError("");
-    // An empty date field must be sent as null, not "".
-    const record = { ...editJob, deadline: editJob.deadline || null };
     let error;
     if (editJob.id) {
       const res = await supabase.from("jobs").update(record).eq("id", editJob.id).select().single();
@@ -90,7 +102,7 @@ const AdminJobs = () => {
     }
     setSaving(false);
     if (error) {
-      setSaveError(error.message);
+      setSaveError(friendlyJobError(error.message));
       return;
     }
     setEditJob(null);
@@ -317,10 +329,16 @@ const AdminJobs = () => {
               <div>
                 <label className="block text-xs font-medium mb-1">Description</label>
                 <Textarea rows={5} value={editJob.description || ""} onChange={(e) => setEditJob({ ...editJob, description: e.target.value })} />
+                <p className={`text-xs mt-1 text-right ${(editJob.description || "").length > JOB_LIMITS.description[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                  {(editJob.description || "").length.toLocaleString("en-US")} / {JOB_LIMITS.description[1].toLocaleString("en-US")} characters
+                </p>
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">Requirements</label>
                 <Textarea rows={4} value={editJob.requirements || ""} onChange={(e) => setEditJob({ ...editJob, requirements: e.target.value })} />
+                <p className={`text-xs mt-1 text-right ${(editJob.requirements || "").length > JOB_LIMITS.requirements[1] ? "text-destructive font-medium" : "text-muted-foreground"}`}>
+                  {(editJob.requirements || "").length.toLocaleString("en-US")} / {JOB_LIMITS.requirements[1].toLocaleString("en-US")} characters
+                </p>
               </div>
               <div>
                 <label className="block text-xs font-medium mb-1">How to Apply <span className="text-muted-foreground font-normal">(links and emails become clickable)</span></label>
