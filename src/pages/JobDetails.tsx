@@ -97,7 +97,7 @@ const JobDetails = () => {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
+      <div className="container mx-auto px-4 py-8">
         <Link to="/view-jobs" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-primary mb-6">
           <ChevronLeft className="w-4 h-4" /> Back to all jobs
         </Link>
@@ -156,7 +156,7 @@ const JobDetails = () => {
               <span className={`flex items-center gap-1 text-xs px-2 py-0.5 rounded-full font-medium ${typeColors[job.type] || "bg-gray-100 text-gray-700"}`}>
                 <Briefcase className="w-3 h-3" /> {job.type}
               </span>
-              <span className="text-xs bg-secondary px-2 py-0.5 rounded-full">{job.category}</span>
+              {job.category && <span className="text-xs bg-secondary px-2 py-0.5 rounded-full">{job.category}</span>}
               {job.salary_range && <span>{job.salary_range}</span>}
               <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Posted {timeSince(job.created_at)}</span>
             </div>
