@@ -8,6 +8,7 @@ import LoginRegister from "./pages/LoginRegister";
 import Humanitarian from "./pages/Humanitarian";
 import SubmitJob from "./pages/SubmitJob";
 import ViewJobs from "./pages/ViewJobs";
+import JobDetails from "./pages/JobDetails";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -31,6 +32,8 @@ function App() {
 
         {/* Anyone can browse jobs; applying needs an account (handled in-page). */}
         <Route path="/view-jobs" element={<ViewJobs />} />
+        {/* Each job has its own page so it can be shared as a link. */}
+        <Route path="/jobs/:id" element={<JobDetails />} />
 
         {/* ── Protected routes (login required) ─────────── */}
         <Route

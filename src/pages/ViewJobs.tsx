@@ -1,17 +1,16 @@
 import { useEffect, useState, useMemo } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { supabase, PublicJob, JobApplyInfo } from "@/lib/supabase";
-import { safeImage, safeLink } from "@/lib/safeUrl";
+import { supabase, PublicJob } from "@/lib/supabase";
+import { safeImage } from "@/lib/safeUrl";
 import { useAuth } from "@/hooks/useAuth";
-import LinkifiedText from "@/components/LinkifiedText";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { typeColors, timeSince, formatDeadline, daysLeft, deadlineNote, jobPath } from "@/lib/jobFormat";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link, useNavigate } from "react-router-dom";
 import {
-  MapPin, Clock, Briefcase, Search, Building2, ChevronRight,
-  Bookmark, SlidersHorizontal, X, ExternalLink, CalendarClock, LogIn, FileText,
+  MapPin, Clock, Search, Building2,
+  Bookmark, SlidersHorizontal, X, CalendarClock, LogIn, FileText,
 } from "lucide-react";
 
 const JOB_TYPES = ["Full-time", "Part-time", "Contract", "Internship", "Remote"];
@@ -20,32 +19,9 @@ const CATEGORIES = [
   "Technology", "Administration", "Healthcare", "Education", "Legal",
 ];
 
-const typeColors: Record<string, string> = {
-  "Full-time":  "bg-green-100 text-green-700",
-  "Part-time":  "bg-blue-100 text-blue-700",
-  "Contract":   "bg-orange-100 text-orange-700",
-  "Internship": "bg-purple-100 text-purple-700",
-  "Remote":     "bg-teal-100 text-teal-700",
-};
-
-const timeSince = (date: string) => {
-  const days = Math.floor((Date.now() - new Date(date).getTime()) / 86400000);
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  return `${days}d ago`;
-};
-
-// Deadlines are plain dates (YYYY-MM-DD); read them as local midnight.
-const formatDeadline = (d: string) =>
-  new Date(`${d}T00:00:00`).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
-const daysLeft = (d: string) =>
-  Math.round((new Date(`${d}T00:00:00`).getTime() - new Date(new Date().toDateString()).getTime()) / 86400000);
-
 const ViewJobs = () => {
   const { isAuthenticated, loading: authLoading } = useAuth();
   const [allJobs, setAllJobs] = useState<PublicJob[]>([]);
-  const [applyInfo, setApplyInfo] = useState<Record<string, JobApplyInfo>>({});
-  const [detailJob, setDetailJob] = useState<PublicJob | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [location, setLocation] = useState("");
@@ -69,26 +45,12 @@ const ViewJobs = () => {
       });
   }, []);
 
-  // How to apply is only served to signed-in users (the database refuses it
-  // to visitors), so applying requires an account.
   useEffect(() => {
     if (!isAuthenticated) { setSaved(new Set()); setShowSavedOnly(false); return; }
     supabase
       .from("saved_jobs")
       .select("job_id")
       .then(({ data }) => setSaved(new Set((data || []).map((r: { job_id: string }) => r.job_id))));
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (!isAuthenticated) { setApplyInfo({}); return; }
-    supabase
-      .from("jobs_apply_info")
-      .select("*")
-      .then(({ data }) => {
-        const byId: Record<string, JobApplyInfo> = {};
-        ((data as JobApplyInfo[]) || []).forEach((a) => { byId[a.id] = a; });
-        setApplyInfo(byId);
-      });
   }, [isAuthenticated]);
 
   const filtered = useMemo(() => {
@@ -129,7 +91,7 @@ const ViewJobs = () => {
   };
 
   const clearFilters = () => { setSearch(""); setLocation(""); setSelectedType([]); setSelectedCat([]); };
-  const hasFilters = search || location || selectedType.length || selectedCat.length;
+  const hasFilters = !!(search || location || selectedType.length || selectedCat.length);
 
   const FilterPanel = () => (
     <div className="space-y-6">
@@ -334,9 +296,9 @@ const ViewJobs = () => {
                         <div className="flex items-start justify-between gap-3 flex-wrap">
                           <div>
                             <h3 className="font-semibold text-base group-hover:text-primary transition-colors">
-                              <button onClick={() => setDetailJob(job)} className="text-left hover:underline">
+                              <Link to={jobPath(job.id)} className="text-left hover:underline">
                                 {job.title}
-                              </button>
+                              </Link>
                             </h3>
                             <p className="text-sm text-muted-foreground">{job.company}</p>
                           </div>
@@ -379,23 +341,22 @@ const ViewJobs = () => {
                         {job.deadline && (
                           <p className={`flex items-center gap-1.5 text-xs mt-3 font-medium ${daysLeft(job.deadline) <= 3 ? "text-destructive" : "text-muted-foreground"}`}>
                             <CalendarClock className="w-3.5 h-3.5" />
-                            Apply by {formatDeadline(job.deadline)}
-                            {daysLeft(job.deadline) === 0 ? " (closes today)" : daysLeft(job.deadline) <= 3 ? ` (${daysLeft(job.deadline)} day${daysLeft(job.deadline) !== 1 ? "s" : ""} left)` : ""}
+                            Apply by {formatDeadline(job.deadline)}{deadlineNote(job.deadline)}
                           </p>
                         )}
 
                         {/* Actions */}
                         <div className="mt-4 flex flex-wrap items-center gap-2">
-                          <button
-                            onClick={() => setDetailJob(job)}
+                          <Link
+                            to={jobPath(job.id)}
                             className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
                           >
                             <FileText className="w-3.5 h-3.5" />
                             {isAuthenticated ? "View Details & Apply" : "View Details"}
-                          </button>
+                          </Link>
                           {!authLoading && !isAuthenticated && (
                             <Link
-                              to="/login-register?returnUrl=/view-jobs"
+                              to={`/login-register?returnUrl=${encodeURIComponent(jobPath(job.id))}`}
                               className="inline-flex items-center gap-1.5 border border-border text-sm font-semibold px-4 py-2 rounded-lg hover:bg-accent transition-colors"
                             >
                               <LogIn className="w-3.5 h-3.5" /> Sign in to Apply
@@ -411,97 +372,6 @@ const ViewJobs = () => {
           </div>
         </div>
       </div>
-
-      {/* Job details: full description and requirements for everyone; how to
-          apply only for signed-in users (the database won't send it otherwise). */}
-      <Dialog open={!!detailJob} onOpenChange={(open) => !open && setDetailJob(null)}>
-        <DialogContent className="max-w-3xl max-h-[88vh] overflow-y-auto">
-          {detailJob && (() => {
-            const info = applyInfo[detailJob.id];
-            const link = safeLink(info?.apply_url);
-            return (
-              <>
-                <DialogHeader>
-                  <DialogTitle className="text-xl font-serif pr-6">{detailJob.title}</DialogTitle>
-                  <DialogDescription className="text-base">{detailJob.company}</DialogDescription>
-                  <button
-                    onClick={() => toggleSave(detailJob.id)}
-                    className={`self-start mt-1 inline-flex items-center gap-1.5 text-sm font-medium rounded-lg px-3 py-1.5 border transition-colors ${saved.has(detailJob.id) ? "bg-primary/10 text-primary border-primary/30" : "border-border hover:bg-accent"}`}
-                  >
-                    <Bookmark className={`w-4 h-4 ${saved.has(detailJob.id) ? "fill-current" : ""}`} />
-                    {!isAuthenticated ? "Sign in to save" : saved.has(detailJob.id) ? "Saved" : "Save job"}
-                  </button>
-                </DialogHeader>
-
-                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span className="flex items-center gap-1"><MapPin className="w-3.5 h-3.5" /> {detailJob.location}</span>
-                  <span className="flex items-center gap-1"><Briefcase className="w-3.5 h-3.5" /> {detailJob.type}</span>
-                  <span>{detailJob.category}</span>
-                  {detailJob.salary_range && <span>{detailJob.salary_range}</span>}
-                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> Posted {timeSince(detailJob.created_at)}</span>
-                </div>
-
-                {detailJob.deadline && (
-                  <p className={`flex items-center gap-1.5 text-sm font-semibold ${daysLeft(detailJob.deadline) <= 3 ? "text-destructive" : "text-foreground"}`}>
-                    <CalendarClock className="w-4 h-4" /> Application deadline: {formatDeadline(detailJob.deadline)}
-                  </p>
-                )}
-
-                <section>
-                  <h4 className="font-semibold mb-2">Job Description</h4>
-                  <LinkifiedText text={detailJob.description} className="text-sm text-foreground leading-relaxed" />
-                </section>
-
-                {detailJob.requirements && (
-                  <section>
-                    <h4 className="font-semibold mb-2">Requirements &amp; Qualifications</h4>
-                    <LinkifiedText text={detailJob.requirements} className="text-sm text-foreground leading-relaxed" />
-                  </section>
-                )}
-
-                <section className="rounded-xl border border-border bg-secondary/40 p-4">
-                  <h4 className="font-semibold mb-2">How to Apply</h4>
-                  {!isAuthenticated ? (
-                    <div className="space-y-3">
-                      <p className="text-sm text-muted-foreground">
-                        Sign in or create a free account to see how to apply for this job.
-                      </p>
-                      <Link
-                        to="/login-register?returnUrl=/view-jobs"
-                        className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
-                      >
-                        <LogIn className="w-3.5 h-3.5" /> Sign in to Apply
-                      </Link>
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      {info?.how_to_apply ? (
-                        <LinkifiedText text={info.how_to_apply} className="text-sm text-foreground" />
-                      ) : !link ? (
-                        <p className="text-sm text-muted-foreground">Contact us to apply for this role.</p>
-                      ) : null}
-                      {link ? (
-                        <a
-                          href={link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1.5 bg-cta text-cta-foreground text-sm font-semibold px-5 py-2 rounded-lg hover:opacity-90 transition-opacity"
-                        >
-                          Apply Now <ExternalLink className="w-3.5 h-3.5" />
-                        </a>
-                      ) : !info?.how_to_apply ? (
-                        <Link to="/contact-us" className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary hover:underline">
-                          Contact us <ChevronRight className="w-3.5 h-3.5" />
-                        </Link>
-                      ) : null}
-                    </div>
-                  )}
-                </section>
-              </>
-            );
-          })()}
-        </DialogContent>
-      </Dialog>
 
       {/* Employer CTA */}
       <section className="bg-secondary py-14">
